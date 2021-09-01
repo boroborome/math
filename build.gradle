@@ -1,0 +1,34 @@
+
+group = 'com.happy3w'
+version = '0.0.1'
+ext {
+	artifactId = "math"
+
+	upload = 'enable'
+	description = "Some kits for common use"
+	url = 'https://github.com/boroborome/math'
+	developerConnection = 'scm:git@github.com:boroborome/math.git'
+}
+
+apply plugin: 'java-library'
+
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation('com.happy3w:java-ext:0.0.1')
+	compileOnly 'org.projectlombok:lombok:1.18.12'
+
+	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+	testImplementation 'junit:junit:4.12'
+	testImplementation 'com.alibaba:fastjson:1.2.29'
+	testCompileOnly 'org.projectlombok:lombok:1.18.12'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+}
+//compileJava.options.compilerArgs.add("-Xlint:unchecked")
+[compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
