@@ -1,8 +1,9 @@
 package com.happy3w.math.tree;
 
 import java.text.MessageFormat;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Spliterators;
-import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -54,8 +55,8 @@ public class TreeEnumerator {
         }
 
         private boolean[] generateNormalShape(boolean[] curBifurcationNodeShape) {
-            Stack<Boolean> nodeTypeStack = new Stack<>();
-            Stack<boolean[]> groupStack = initGroupStack(curBifurcationNodeShape);
+            Deque<Boolean> nodeTypeStack = new ArrayDeque<>();
+            Deque<boolean[]> groupStack = initGroupStack(curBifurcationNodeShape);
             boolean[] shape = new boolean[(bifurcationNodeCount * bifurcationCount + 1) * bifurcationCount];
             int shapeIndex = 0;
 
@@ -84,8 +85,8 @@ public class TreeEnumerator {
             return shapeIndex + shapeCount;
         }
 
-        private Stack<boolean[]> initGroupStack(boolean[] curBifurcationNodeShape) {
-            Stack<boolean[]> groupStack = new Stack<>();
+        private Deque<boolean[]> initGroupStack(boolean[] curBifurcationNodeShape) {
+            Deque<boolean[]> groupStack = new ArrayDeque<>();
             groupStack.push(new boolean[bifurcationCount]); // add the ignored group which is always be leaf node in Bifurcation Shape
             for (int i = curBifurcationNodeShape.length; i > 0; i-= bifurcationCount) {
                 boolean[] group = new boolean[bifurcationCount];
@@ -96,13 +97,13 @@ public class TreeEnumerator {
             return groupStack;
         }
 
-        private int fetchFromGroup(Stack<boolean[]> groupStack, Stack<Boolean> nodeTypeStack, boolean[] shape, int shapeIndex) {
+        private int fetchFromGroup(Deque<boolean[]> groupStack, Deque<Boolean> nodeTypeStack, boolean[] shape, int shapeIndex) {
             boolean[] bitGroup = groupStack.pop();
             pushToTypeStack(bitGroup, nodeTypeStack);
             return writeShape(shape, shapeIndex, true, bifurcationCount);
         }
 
-        private void pushToTypeStack(boolean[] bitGroup, Stack<Boolean> nodeTypeStack) {
+        private void pushToTypeStack(boolean[] bitGroup, Deque<Boolean> nodeTypeStack) {
             for (int i = bitGroup.length - 1; i >= 0; i--) {
                 nodeTypeStack.push(bitGroup[i]);
             }
