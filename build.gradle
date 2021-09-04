@@ -2,7 +2,7 @@
 group = 'com.happy3w'
 version = '0.0.1'
 ext {
-	artifactId = "math"
+	artifactId = "happy3w-math"
 
 	upload = 'enable'
 	description = "Some kits for common use"
