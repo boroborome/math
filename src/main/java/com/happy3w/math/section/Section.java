@@ -27,8 +27,8 @@ public class Section<T> {
     }
 
     public Section<T> unionItem(SectionItem<T> newItem) {
-        int itemFromIndex = putFromItem(newItem);
-        mergeToItem(itemFromIndex, newItem);
+        int itemFromIndex = unionFromItem(newItem);
+        unionToItem(itemFromIndex, newItem);
         return this;
     }
 
@@ -39,7 +39,76 @@ public class Section<T> {
         return this;
     }
 
-    private void mergeToItem(int itemFromIndex, SectionItem<T> newItem) {
+    public Section<T> subtract(SectionItem<T> subItem) {
+        int itemFromIndex = subFromItem(subItem);
+        subToItem(itemFromIndex, subItem);
+        return this;
+    }
+
+    private void subToItem(int itemFromIndex, SectionItem<T> subItem) {
+        if (itemFromIndex >= items.size()) {
+            return;
+        }
+
+        for (int index = itemFromIndex; index < items.size(); ) {
+            SectionItem<T> curItem = items.get(index);
+            int crFrom = nullLastComparator.compare(subItem.getTo(), curItem.getFrom());
+            if (crFrom < 0) {
+                return;
+            } else if (crFrom == 0) {
+                if (subItem.isIncludeTo()) {
+                    curItem.setIncludeFrom(false);
+                }
+                return;
+            }
+
+            int crTo = nullLastComparator.compare(subItem.getTo(), curItem.getTo());
+            if (crTo < 0) {
+                curItem.configFrom(subItem.getTo(), !subItem.isIncludeTo());
+                return;
+            } else if (crTo == 0) {
+                if (!subItem.isIncludeFrom() && curItem.isIncludeFrom()) {
+                    curItem.configFrom(subItem.getTo(), !subItem.isIncludeTo());
+                } else {
+                    items.remove(index);
+                }
+                return;
+            }
+            items.remove(index);
+        }
+    }
+
+    private int subFromItem(SectionItem<T> subItem) {
+        for (int index = 0; index < items.size(); index++) {
+            SectionItem<T> item = items.get(index);
+            int crFrom = nullFirstComparator.compare(subItem.getFrom(), item.getFrom());
+            if (crFrom < 0) {
+                return index;
+            } else if (crFrom == 0) {
+                if (item.isIncludeFrom() && !subItem.isIncludeFrom()) {
+                    items.add(index, new SectionItem<>(item.getFrom(), true, item.getFrom(), true));
+                    return index + 1;
+                }
+                return index;
+            }
+
+            int crTo = nullLastComparator.compare(subItem.getFrom(), item.getTo());
+            if (crTo < 0) {
+                items.add(index + 1, item.newCopy());
+                item.configTo(subItem.getFrom(), !subItem.isIncludeFrom());
+                return index + 1;
+            } else if (crTo == 0) {
+                if (subItem.isIncludeFrom()) {
+                    item.setIncludeTo(false);
+                }
+                return index + 1;
+            }
+        }
+
+        return items.size();
+    }
+
+    private void unionToItem(int itemFromIndex, SectionItem<T> newItem) {
         SectionItem<T> itemToUpdate = items.get(itemFromIndex);
         for (int index = itemFromIndex + 1; index < items.size(); ) {
             SectionItem<T> curItem = items.get(index);
@@ -69,9 +138,10 @@ public class Section<T> {
             }
             items.remove(index);
         }
+        itemToUpdate.configTo(newItem.getTo(), newItem.isIncludeTo());
     }
 
-    private int putFromItem(SectionItem<T> newItem) {
+    private int unionFromItem(SectionItem<T> newItem) {
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
             int crFrom = nullFirstComparator.compare(newItem.getFrom(), item.getFrom());
@@ -89,7 +159,7 @@ public class Section<T> {
             if (crTo < 0) {
                 return index;
             } else if (crTo == 0) {
-                if (item.isIncludeTo() || newItem.isIncludeTo()) {
+                if (item.isIncludeTo() || newItem.isIncludeFrom()) {
                     return index;
                 } else {
                     int newIndex = index + 1;
