@@ -26,15 +26,15 @@ public class Section<T> {
         items.addAll(Arrays.asList(itemArray));
     }
 
-    public Section<T> merge(SectionItem<T> newItem) {
+    public Section<T> unionItem(SectionItem<T> newItem) {
         int itemFromIndex = putFromItem(newItem);
         mergeToItem(itemFromIndex, newItem);
         return this;
     }
 
-    public Section<T> merge(Section<T> otherSection) {
+    public Section<T> unionSection(Section<T> otherSection) {
         for (SectionItem<T> items : otherSection.items) {
-            merge(items);
+            unionItem(items);
         }
         return this;
     }
