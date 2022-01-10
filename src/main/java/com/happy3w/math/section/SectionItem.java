@@ -26,6 +26,10 @@ public class SectionItem <T>{
         this.includeTo = to == null ? false : includeTo;
     }
 
+    public SectionItem<T> newCopy() {
+        return new SectionItem<>(from, includeFrom, to, includeTo);
+    }
+
     public void configFrom(T from, boolean includeFrom) {
         this.from = from;
         this.includeFrom = includeFrom;

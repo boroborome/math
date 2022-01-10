@@ -32,6 +32,13 @@ public class Section<T> {
         return this;
     }
 
+    public Section<T> merge(Section<T> otherSection) {
+        for (SectionItem<T> items : otherSection.items) {
+            merge(items);
+        }
+        return this;
+    }
+
     private void mergeToItem(int itemFromIndex, SectionItem<T> newItem) {
         SectionItem<T> itemToUpdate = items.get(itemFromIndex);
         for (int index = itemFromIndex + 1; index < items.size(); ) {
@@ -69,7 +76,7 @@ public class Section<T> {
             SectionItem<T> item = items.get(index);
             int crFrom = nullFirstComparator.compare(newItem.getFrom(), item.getFrom());
             if (crFrom < 0) {
-                items.add(index, newItem);
+                items.add(index, newItem.newCopy());
                 return index;
             } else if (crFrom == 0) {
                 if (newItem.isIncludeFrom()) {
@@ -86,13 +93,13 @@ public class Section<T> {
                     return index;
                 } else {
                     int newIndex = index + 1;
-                    items.add(newIndex, newItem);
+                    items.add(newIndex, newItem.newCopy());
                     return newIndex;
                 }
             }
         }
 
-        items.add(newItem);
+        items.add(newItem.newCopy());
         return items.size() - 1;
     }
 
