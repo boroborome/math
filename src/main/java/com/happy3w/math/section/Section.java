@@ -43,36 +43,24 @@ public class Section<T> {
             } else if (crFrom == 0) {
                 if (curItem.isIncludeFrom() || newItem.isIncludeTo()) {
                     itemToUpdate.configTo(curItem.getTo(), curItem.isIncludeTo());
-                    if (index != itemFromIndex) {
-                        items.remove(index);
-                    }
-                    return;
+                    items.remove(index);
                 } else {
                     itemToUpdate.configTo(newItem.getTo(), newItem.isIncludeTo());
-                    return;
                 }
+                return;
             }
 
             int crTo = nullLastComparator.compare(newItem.getTo(), curItem.getTo());
             if (crTo < 0) {
                 itemToUpdate.configTo(curItem.getTo(), curItem.isIncludeTo());
-                if (index != itemFromIndex) {
-                    items.remove(index);
-                }
+                items.remove(index);
                 return;
             } else if (crTo == 0) {
                 itemToUpdate.configTo(curItem.getTo(), curItem.isIncludeTo() || newItem.isIncludeTo());
-                if (index != itemFromIndex) {
-                    items.remove(index);
-                }
+                items.remove(index);
                 return;
             }
-
-            if (index != itemFromIndex) {
-                items.remove(index);
-            } else {
-                index++;
-            }
+            items.remove(index);
         }
     }
 
@@ -94,9 +82,7 @@ public class Section<T> {
             if (crTo < 0) {
                 return index;
             } else if (crTo == 0) {
-                if (item.isIncludeTo()) {
-                    return index;
-                } else if (newItem.isIncludeTo()) {
+                if (item.isIncludeTo() || newItem.isIncludeTo()) {
                     return index;
                 } else {
                     int newIndex = index + 1;
