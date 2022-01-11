@@ -17,4 +17,9 @@ public class SectionItemValue<T> {
         this.include = value == null ? false : include;
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return value + "," + include + "," + type;
+    }
 }
