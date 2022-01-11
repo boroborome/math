@@ -28,17 +28,17 @@ public class SectionItemValueComparatorTest {
         Assert.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, true, to),
                 new SectionItemValue<Integer>(2, false, from)
-        ) > 0);
+        ) == 0);
 
         Assert.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, false, to),
                 new SectionItemValue<Integer>(2, true, from)
-        ) > 0);
+        ) == 0);
 
         Assert.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, false, from),
                 new SectionItemValue<Integer>(2, true, from)
-        ) > 0);
+        ) == 0);
 
         Assert.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, true, from),
@@ -48,7 +48,7 @@ public class SectionItemValueComparatorTest {
         Assert.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, true, from),
                 new SectionItemValue<Integer>(2, false, from)
-        ) < 0);
+        ) == 0);
 
         Assert.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(1, false, from),

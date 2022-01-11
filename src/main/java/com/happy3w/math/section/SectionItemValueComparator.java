@@ -18,20 +18,7 @@ public class SectionItemValueComparator<T> implements Comparator<SectionItemValu
             return crKind;
         }
 
-        int crValue = valueComparator.compare(o1.getValue(), o2.getValue());
-        if (crValue != 0) {
-            return crValue;
-        }
-
-        int crType = o1.getType().getValue() - o2.getType().getValue();
-        if (crType != 0) {
-            return crType;
-        }
-
-        int includeV1 = o1.isInclude() ? 1 : 0;
-        int includeV2 = o2.isInclude() ? 1 : 0;
-
-        return (includeV1 - includeV2) * o1.getType().getValue();
+        return valueComparator.compare(o1.getValue(), o2.getValue());
     }
 
     private int getValueKind(SectionItemValue<T> itemValue) {
