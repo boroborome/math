@@ -15,21 +15,30 @@ public class Section<T> {
     public static final String SPLITER = "";
 
     private List<SectionItem<T>> items = new ArrayList<>();
-    private Comparator<T> comparator;
-    private Comparator<T> nullFirstComparator;
-    private Comparator<T> nullLastComparator;
+    private SectionItemValueComparator<T> comparator;
 
     public Section(Comparator<T> comparator, SectionItem<T>... itemArray) {
-        this.comparator = comparator;
-        this.nullFirstComparator = Comparator.nullsFirst(comparator);
-        this.nullLastComparator = Comparator.nullsLast(comparator);
+        this.comparator = new SectionItemValueComparator(comparator);
         items.addAll(Arrays.asList(itemArray));
     }
 
     public Section<T> unionItem(SectionItem<T> newItem) {
         int itemFromIndex = unionFromItem(newItem);
         unionToItem(itemFromIndex, newItem);
+
         return this;
+    }
+
+    private List<SectionItemValue<T>> allItemValues(List<SectionItem<T>> items, SectionItem<T> newItem) {
+        List<SectionItemValue<T>> itemValues = new ArrayList<>();
+        for (SectionItem<T> item : items) {
+            itemValues.add(item.getFrom());
+            itemValues.add(item.getTo());
+        }
+        itemValues.add(newItem.getFrom());
+        itemValues.add(newItem.getTo());
+
+        return itemValues;
     }
 
     public Section<T> unionSection(Section<T> otherSection) {
@@ -52,7 +61,7 @@ public class Section<T> {
 
         for (int index = itemFromIndex; index < items.size(); ) {
             SectionItem<T> curItem = items.get(index);
-            int crFrom = nullLastComparator.compare(subItem.getToValue(), curItem.getFromValue());
+            int crFrom = comparator.compare(subItem.getTo(), curItem.getFrom());
             if (crFrom < 0) {
                 return;
             } else if (crFrom == 0) {
@@ -62,7 +71,7 @@ public class Section<T> {
                 return;
             }
 
-            int crTo = nullLastComparator.compare(subItem.getToValue(), curItem.getToValue());
+            int crTo = comparator.compare(subItem.getTo(), curItem.getTo());
             if (crTo < 0) {
                 curItem.configFrom(subItem.getToValue(), !subItem.isIncludeTo());
                 return;
@@ -79,26 +88,27 @@ public class Section<T> {
     }
 
     private int subFromItem(SectionItem<T> subItem) {
+        SectionItemValue<T> subItemFrom = subItem.getFrom();
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
-            int crFrom = nullFirstComparator.compare(subItem.getFromValue(), item.getFromValue());
+            int crFrom = comparator.compare(subItemFrom, item.getFrom());
             if (crFrom < 0) {
                 return index;
             } else if (crFrom == 0) {
-                if (item.isIncludeFrom() && !subItem.isIncludeFrom()) {
-                    items.add(index, SectionItem.ofValue(item.getFromValue(), true, item.getFromValue(), true));
+                if (item.isIncludeFrom() && !subItemFrom.isInclude()) {
+                    items.add(index, SectionItem.ofValue(subItemFrom.getValue(), true, subItemFrom.getValue(), true));
                     return index + 1;
                 }
                 return index;
             }
 
-            int crTo = nullLastComparator.compare(subItem.getFromValue(), item.getToValue());
+            int crTo = comparator.compare(subItemFrom, item.getTo());
             if (crTo < 0) {
                 items.add(index + 1, item.newCopy());
-                item.configTo(subItem.getFromValue(), !subItem.isIncludeFrom());
+                item.setTo(new SectionItemValue<>(subItemFrom.getValue(), !subItemFrom.isInclude(), ItemValueType.to));
                 return index + 1;
             } else if (crTo == 0) {
-                if (subItem.isIncludeFrom()) {
+                if (subItemFrom.isInclude()) {
                     item.setIncludeTo(false);
                 }
                 return index + 1;
@@ -110,33 +120,40 @@ public class Section<T> {
 
     private void unionToItem(int itemFromIndex, SectionItem<T> newItem) {
         SectionItem<T> itemToUpdate = items.get(itemFromIndex);
-        for (int index = itemFromIndex + 1; index < items.size(); ) {
+        for (int index = itemFromIndex; index < items.size(); ) {
             SectionItem<T> curItem = items.get(index);
-            int crFrom = nullLastComparator.compare(newItem.getToValue(), curItem.getFromValue());
-            if (crFrom < 0) {
-                itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
-                return;
-            } else if (crFrom == 0) {
-                if (curItem.isIncludeFrom() || newItem.isIncludeTo()) {
+            if (index != itemFromIndex) {
+                int crFrom = comparator.compare(newItem.getTo(), curItem.getFrom());
+                if (crFrom < 0) {
+                    itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
+                    return;
+                } else if (crFrom == 0) {
+                    if (curItem.isIncludeFrom() || newItem.isIncludeTo()) {
+                        itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo());
+                        items.remove(index);
+                    } else {
+                        itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
+                    }
+                    return;
+                }
+            }
+
+            int crTo = comparator.compare(newItem.getTo(), curItem.getTo());
+            if (crTo < 0) {
+                if (itemToUpdate != curItem) {
                     itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo());
                     items.remove(index);
-                } else {
-                    itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
                 }
                 return;
             }
-
-            int crTo = nullLastComparator.compare(newItem.getToValue(), curItem.getToValue());
-            if (crTo < 0) {
-                itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo());
-                items.remove(index);
-                return;
-            } else if (crTo == 0) {
+            if (crTo == 0) {
                 itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo() || newItem.isIncludeTo());
-                items.remove(index);
-                return;
             }
-            items.remove(index);
+            if (itemToUpdate != curItem) {
+                items.remove(index);
+            } else {
+                index++;
+            }
         }
         itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
     }
@@ -144,7 +161,7 @@ public class Section<T> {
     private int unionFromItem(SectionItem<T> newItem) {
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
-            int crFrom = nullFirstComparator.compare(newItem.getFromValue(), item.getFromValue());
+            int crFrom = comparator.compare(newItem.getFrom(), item.getFrom());
             if (crFrom < 0) {
                 items.add(index, newItem.newCopy());
                 return index;
@@ -155,7 +172,7 @@ public class Section<T> {
                 return index;
             }
 
-            int crTo = nullLastComparator.compare(newItem.getFromValue(), item.getToValue());
+            int crTo = comparator.compare(newItem.getFrom(), item.getTo());
             if (crTo < 0) {
                 return index;
             } else if (crTo == 0) {

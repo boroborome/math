@@ -8,13 +8,6 @@ import java.util.function.Function;
 
 public class SectionTest {
 
-//    @Test
-//    public void test() {
-//        Assert.assertEquals("(*,*)", new Section<Integer>(Comparator.comparing(Function.identity()), SectionItem.ofValue(null, null))
-//                .unionItem(SectionItem.ofValue(null, 2))
-//                .toString());
-//    }
-
     @Test
     public void should_union_item_success() {
         Assert.assertEquals("[2,5][7,9]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
@@ -46,15 +39,19 @@ public class SectionTest {
         Assert.assertEquals("(*,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
                 .unionItem(SectionItem.ofValue(null, 2))
                 .toString());
-//        Assert.assertEquals("(*,*)", new Section<Integer>(Comparator.comparing(Function.identity()), SectionItem.ofValue(null, null))
-//                .unionItem(SectionItem.ofValue(null, 2))
-//                .toString());
+        Assert.assertEquals("(*,*)", new Section<Integer>(Comparator.comparing(Function.identity()), SectionItem.ofValue(null, null))
+                .unionItem(SectionItem.ofValue(null, 2))
+                .toString());
 
         Assert.assertEquals("(*,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, false, 5, true))
                 .unionItem(SectionItem.ofValue(null, 2))
                 .toString());
         Assert.assertEquals("(*,2)(2,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, false, 5, true))
                 .unionItem(SectionItem.ofValue(null, false, 2, false))
+                .toString());
+        Assert.assertEquals("(-2,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, false, 5, true))
+                .unionItem(SectionItem.ofValue(-2, false, 2, false))
+                .unionItem(SectionItem.ofValue(0, false, 2, true))
                 .toString());
     }
 
@@ -81,9 +78,9 @@ public class SectionTest {
         Assert.assertEquals("[2,4)", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
                 .subtract(SectionItem.ofValue(4, 6))
                 .toString());
-//        Assert.assertEquals("[2,3)(4,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
-//                .subtract(SectionItem.ofValue(3, 4))
-//                .toString());
+        Assert.assertEquals("[2,3)(4,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
+                .subtract(SectionItem.ofValue(3, 4))
+                .toString());
         Assert.assertEquals("(8,9]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
                         .unionItem(SectionItem.ofValue(8, 9))
                 .subtract(SectionItem.ofValue(null, 8))

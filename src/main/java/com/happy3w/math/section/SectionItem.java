@@ -23,13 +23,11 @@ public class SectionItem <T>{
     }
 
     public void configFrom(T from, boolean includeFrom) {
-        this.from.setValue(from);
-        this.from.setInclude(includeFrom);
+        this.from = new SectionItemValue<>(from, includeFrom, ItemValueType.from);
     }
 
     public void configTo(T to, boolean includeTo) {
-        this.to.setValue(to);
-        this.to.setInclude(includeTo);
+        this.to = new SectionItemValue<>(to, includeTo, ItemValueType.to);
     }
 
     @Override
