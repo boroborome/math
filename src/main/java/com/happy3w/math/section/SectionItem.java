@@ -10,34 +10,26 @@ import java.io.IOException;
 public class SectionItem <T>{
     public static final String NULL_TEXT = "*";
 
-    private T from;
-    private boolean includeFrom;
-    private T to;
-    private boolean includeTo;
+    private SectionItemValue<T> from;
+    private SectionItemValue<T> to;
 
-    public SectionItem(T from, T to) {
-        this(from, true, to, true);
-    }
-
-    public SectionItem(T from, boolean includeFrom, T to, boolean includeTo) {
+    public SectionItem(SectionItemValue<T> from, SectionItemValue<T> to) {
         this.from = from;
-        this.includeFrom = from == null ? false : includeFrom;
         this.to = to;
-        this.includeTo = to == null ? false : includeTo;
     }
 
     public SectionItem<T> newCopy() {
-        return new SectionItem<>(from, includeFrom, to, includeTo);
+        return new SectionItem<>(from, to);
     }
 
     public void configFrom(T from, boolean includeFrom) {
-        this.from = from;
-        this.includeFrom = includeFrom;
+        this.from.setValue(from);
+        this.from.setInclude(includeFrom);
     }
 
     public void configTo(T to, boolean includeTo) {
-        this.to = to;
-        this.includeTo = includeTo;
+        this.to.setValue(to);
+        this.to.setInclude(includeTo);
     }
 
     @Override
@@ -52,10 +44,44 @@ public class SectionItem <T>{
     }
 
     public void output(Appendable buf, String nullFrom, String nullTo) throws IOException {
-        buf.append(includeFrom ? '[' : '(')
-                .append(from == null ? nullFrom : from.toString())
+        buf.append(from.isInclude() ? '[' : '(')
+                .append(from.getValue() == null ? nullFrom : from.getValue().toString())
                 .append(',')
-                .append(to == null ? nullTo : to.toString())
-                .append(includeTo ? ']' : ')');
+                .append(to.getValue() == null ? nullTo : to.getValue().toString())
+                .append(to.isInclude() ? ']' : ')');
+    }
+
+    public boolean isIncludeTo() {
+        return to.isInclude();
+    }
+
+    public void setIncludeTo(boolean include) {
+        to.setInclude(include);
+    }
+
+    public boolean isIncludeFrom() {
+        return from.isInclude();
+    }
+
+    public void setIncludeFrom(boolean include) {
+        from.setInclude(include);
+    }
+
+    public T getFromValue() {
+        return from.getValue();
+    }
+
+    public T getToValue() {
+        return to.getValue();
+    }
+
+    public static <T> SectionItem<T> ofValue(T from, T to) {
+        return new SectionItem<>(new SectionItemValue<>(from, true, ItemValueType.from),
+                new SectionItemValue<>(to, true, ItemValueType.to));
+    }
+
+    public static <T> SectionItem<T> ofValue(T from, boolean includeFrom, T to, boolean includeTo) {
+        return new SectionItem<>(new SectionItemValue<>(from, includeFrom, ItemValueType.from),
+                new SectionItemValue<>(to, includeTo, ItemValueType.to));
     }
 }

@@ -52,7 +52,7 @@ public class Section<T> {
 
         for (int index = itemFromIndex; index < items.size(); ) {
             SectionItem<T> curItem = items.get(index);
-            int crFrom = nullLastComparator.compare(subItem.getTo(), curItem.getFrom());
+            int crFrom = nullLastComparator.compare(subItem.getToValue(), curItem.getFromValue());
             if (crFrom < 0) {
                 return;
             } else if (crFrom == 0) {
@@ -62,13 +62,13 @@ public class Section<T> {
                 return;
             }
 
-            int crTo = nullLastComparator.compare(subItem.getTo(), curItem.getTo());
+            int crTo = nullLastComparator.compare(subItem.getToValue(), curItem.getToValue());
             if (crTo < 0) {
-                curItem.configFrom(subItem.getTo(), !subItem.isIncludeTo());
+                curItem.configFrom(subItem.getToValue(), !subItem.isIncludeTo());
                 return;
             } else if (crTo == 0) {
                 if (!subItem.isIncludeFrom() && curItem.isIncludeFrom()) {
-                    curItem.configFrom(subItem.getTo(), !subItem.isIncludeTo());
+                    curItem.configFrom(subItem.getToValue(), !subItem.isIncludeTo());
                 } else {
                     items.remove(index);
                 }
@@ -81,21 +81,21 @@ public class Section<T> {
     private int subFromItem(SectionItem<T> subItem) {
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
-            int crFrom = nullFirstComparator.compare(subItem.getFrom(), item.getFrom());
+            int crFrom = nullFirstComparator.compare(subItem.getFromValue(), item.getFromValue());
             if (crFrom < 0) {
                 return index;
             } else if (crFrom == 0) {
                 if (item.isIncludeFrom() && !subItem.isIncludeFrom()) {
-                    items.add(index, new SectionItem<>(item.getFrom(), true, item.getFrom(), true));
+                    items.add(index, SectionItem.ofValue(item.getFromValue(), true, item.getFromValue(), true));
                     return index + 1;
                 }
                 return index;
             }
 
-            int crTo = nullLastComparator.compare(subItem.getFrom(), item.getTo());
+            int crTo = nullLastComparator.compare(subItem.getFromValue(), item.getToValue());
             if (crTo < 0) {
                 items.add(index + 1, item.newCopy());
-                item.configTo(subItem.getFrom(), !subItem.isIncludeFrom());
+                item.configTo(subItem.getFromValue(), !subItem.isIncludeFrom());
                 return index + 1;
             } else if (crTo == 0) {
                 if (subItem.isIncludeFrom()) {
@@ -112,39 +112,39 @@ public class Section<T> {
         SectionItem<T> itemToUpdate = items.get(itemFromIndex);
         for (int index = itemFromIndex + 1; index < items.size(); ) {
             SectionItem<T> curItem = items.get(index);
-            int crFrom = nullLastComparator.compare(newItem.getTo(), curItem.getFrom());
+            int crFrom = nullLastComparator.compare(newItem.getToValue(), curItem.getFromValue());
             if (crFrom < 0) {
-                itemToUpdate.configTo(newItem.getTo(), newItem.isIncludeTo());
+                itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
                 return;
             } else if (crFrom == 0) {
                 if (curItem.isIncludeFrom() || newItem.isIncludeTo()) {
-                    itemToUpdate.configTo(curItem.getTo(), curItem.isIncludeTo());
+                    itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo());
                     items.remove(index);
                 } else {
-                    itemToUpdate.configTo(newItem.getTo(), newItem.isIncludeTo());
+                    itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
                 }
                 return;
             }
 
-            int crTo = nullLastComparator.compare(newItem.getTo(), curItem.getTo());
+            int crTo = nullLastComparator.compare(newItem.getToValue(), curItem.getToValue());
             if (crTo < 0) {
-                itemToUpdate.configTo(curItem.getTo(), curItem.isIncludeTo());
+                itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo());
                 items.remove(index);
                 return;
             } else if (crTo == 0) {
-                itemToUpdate.configTo(curItem.getTo(), curItem.isIncludeTo() || newItem.isIncludeTo());
+                itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo() || newItem.isIncludeTo());
                 items.remove(index);
                 return;
             }
             items.remove(index);
         }
-        itemToUpdate.configTo(newItem.getTo(), newItem.isIncludeTo());
+        itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
     }
 
     private int unionFromItem(SectionItem<T> newItem) {
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
-            int crFrom = nullFirstComparator.compare(newItem.getFrom(), item.getFrom());
+            int crFrom = nullFirstComparator.compare(newItem.getFromValue(), item.getFromValue());
             if (crFrom < 0) {
                 items.add(index, newItem.newCopy());
                 return index;
@@ -155,7 +155,7 @@ public class Section<T> {
                 return index;
             }
 
-            int crTo = nullLastComparator.compare(newItem.getFrom(), item.getTo());
+            int crTo = nullLastComparator.compare(newItem.getFromValue(), item.getToValue());
             if (crTo < 0) {
                 return index;
             } else if (crTo == 0) {
