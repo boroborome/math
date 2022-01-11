@@ -29,18 +29,6 @@ public class Section<T> {
         return this;
     }
 
-    private List<SectionItemValue<T>> allItemValues(List<SectionItem<T>> items, SectionItem<T> newItem) {
-        List<SectionItemValue<T>> itemValues = new ArrayList<>();
-        for (SectionItem<T> item : items) {
-            itemValues.add(item.getFrom());
-            itemValues.add(item.getTo());
-        }
-        itemValues.add(newItem.getFrom());
-        itemValues.add(newItem.getTo());
-
-        return itemValues;
-    }
-
     public Section<T> unionSection(Section<T> otherSection) {
         for (SectionItem<T> items : otherSection.items) {
             unionItem(items);

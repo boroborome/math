@@ -10,6 +10,9 @@ public class SectionTest {
 
     @Test
     public void should_union_item_success() {
+        Assert.assertEquals("[2,5)(5,9]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, true, 5, false))
+                .unionItem(SectionItem.ofValue(5, false, 9, true))
+                .toString());
         Assert.assertEquals("[2,5][7,9]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
                 .unionItem(SectionItem.ofValue(7, 9))
                 .toString());
