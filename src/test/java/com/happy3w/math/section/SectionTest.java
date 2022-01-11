@@ -10,6 +10,10 @@ public class SectionTest {
 
     @Test
     public void should_union_item_success() {
+        Assert.assertEquals("[5,9]", new Section<Integer>(Comparator.comparing(Function.identity()))
+                .unionItem(SectionItem.ofValue(5, 9))
+                .toString());
+
         Assert.assertEquals("[2,5)(5,9]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, true, 5, false))
                 .unionItem(SectionItem.ofValue(5, false, 9, true))
                 .toString());
@@ -60,16 +64,20 @@ public class SectionTest {
 
     @Test
     public void should_sub_success() {
-        Assert.assertEquals("[2,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
+        Assert.assertEquals("", new Section<>(Integer.class)
                 .subtract(SectionItem.ofValue(7, 9))
                 .toString());
-        Assert.assertEquals("[2,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
+
+        Assert.assertEquals("[2,5]", new Section<>(Integer.class, SectionItem.ofValue(2, 5))
+                .subtract(SectionItem.ofValue(7, 9))
+                .toString());
+        Assert.assertEquals("[2,5]", new Section<>(Integer.class, SectionItem.ofValue(2, 5))
                 .subtract(SectionItem.ofValue(0, 1))
                 .toString());
-        Assert.assertEquals("(3,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
+        Assert.assertEquals("(3,5]", new Section<>(Integer.class, SectionItem.ofValue(2, 5))
                 .subtract(SectionItem.ofValue(0, 3))
                 .toString());
-        Assert.assertEquals("[2,2](3,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
+        Assert.assertEquals("[2,2](3,5]", new Section<>(Integer.class, SectionItem.ofValue(2, 5))
                 .subtract(SectionItem.ofValue(2, false, 3, true))
                 .toString());
         Assert.assertEquals("(2,5]", new Section<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))

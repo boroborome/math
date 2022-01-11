@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 @Getter
 @Setter
@@ -16,6 +17,14 @@ public class Section<T> {
 
     private List<SectionItem<T>> items = new ArrayList<>();
     private SectionItemValueComparator<T> comparator;
+
+    public Section(Class<T> type, SectionItem<T>... itemArray) {
+        if (!Comparable.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException("Param type should be Comparable");
+        }
+        this.comparator = new SectionItemValueComparator(Comparator.comparing(Function.identity()));
+        items.addAll(Arrays.asList(itemArray));
+    }
 
     public Section(Comparator<T> comparator, SectionItem<T>... itemArray) {
         this.comparator = new SectionItemValueComparator(comparator);
