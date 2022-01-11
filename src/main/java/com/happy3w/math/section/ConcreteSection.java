@@ -4,48 +4,30 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
-import java.util.function.Function;
 
 @Getter
 @Setter
-public class Section<T> {
-    public static final String SPLITER = "";
+public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
 
-    private List<SectionItem<T>> items = new ArrayList<>();
-    private SectionItemValueComparator<T> comparator;
-
-    public Section(Class<T> type, SectionItem<T>... itemArray) {
-        if (!Comparable.class.isAssignableFrom(type)) {
-            throw new IllegalArgumentException("Param type should be Comparable");
-        }
-        this.comparator = new SectionItemValueComparator(Comparator.comparing(Function.identity()));
-        items.addAll(Arrays.asList(itemArray));
+    public ConcreteSection(Class<T> type, SectionItem<T>... itemArray) {
+        super(type, itemArray);
     }
 
-    public Section(Comparator<T> comparator, SectionItem<T>... itemArray) {
-        this.comparator = new SectionItemValueComparator(comparator);
-        items.addAll(Arrays.asList(itemArray));
+    public ConcreteSection(Comparator<T> comparator, SectionItem<T>... itemArray) {
+        super(comparator, itemArray);
     }
 
-    public Section<T> unionItem(SectionItem<T> newItem) {
+    @Override
+    public ConcreteSection<T> unionItem(SectionItem<T> newItem) {
         int itemFromIndex = unionFromItem(newItem);
         unionToItem(itemFromIndex, newItem);
 
         return this;
     }
 
-    public Section<T> unionSection(Section<T> otherSection) {
-        for (SectionItem<T> items : otherSection.items) {
-            unionItem(items);
-        }
-        return this;
-    }
-
-    public Section<T> subtract(SectionItem<T> subItem) {
+    @Override
+    public ConcreteSection<T> subtract(SectionItem<T> subItem) {
         int itemFromIndex = subFromItem(subItem);
         subToItem(itemFromIndex, subItem);
         return this;
