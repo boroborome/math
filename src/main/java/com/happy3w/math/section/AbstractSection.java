@@ -40,6 +40,13 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
         items.addAll(Arrays.asList(itemArray));
     }
 
+    public S unionSection(S otherSection) {
+        for (SectionItem<T> items : otherSection.items) {
+            unionItem(items);
+        }
+        return (S) this;
+    }
+
     public S unionItem(SectionItem<T> newItem) {
         int itemFromIndex = unionFromItem(newItem);
         unionToItem(itemFromIndex, newItem);
@@ -47,9 +54,9 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
         return (S) this;
     }
 
-    public S unionSection(S otherSection) {
+    public S subtractSection(S otherSection) {
         for (SectionItem<T> items : otherSection.items) {
-            unionItem(items);
+            subtractItem(items);
         }
         return (S) this;
     }
