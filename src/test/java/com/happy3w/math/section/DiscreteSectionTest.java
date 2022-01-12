@@ -94,4 +94,24 @@ public class DiscreteSectionTest {
                 .subtractItem(SectionItem.ofValue(null, 8))
                 .toString());
     }
+
+    @Test
+    public void should_subtract_section_to_empty_success() {
+        DiscreteSection<Integer> section1 = new DiscreteSection<>(DiscretizeCalculators.intCalculator, SectionItem.ofValue(null, 5));
+        DiscreteSection<Integer> section2 = new DiscreteSection<>(DiscretizeCalculators.intCalculator, SectionItem.ofValue(null, 6),
+                SectionItem.ofValue(8, 12));
+
+        section1.subtractSection(section2);
+        Assert.assertEquals("", section1.toString());
+    }
+
+    @Test
+    public void should_subtract_section_with_left_success() {
+        DiscreteSection<Integer> section1 = new DiscreteSection<>(DiscretizeCalculators.intCalculator, SectionItem.ofValue(null, 5));
+        DiscreteSection<Integer> section2 = new DiscreteSection<>(DiscretizeCalculators.intCalculator, SectionItem.ofValue(3, 6),
+                SectionItem.ofValue(8, 12));
+
+        section1.subtractSection(section2);
+        Assert.assertEquals("(*,2]", section1.toString());
+    }
 }
