@@ -1,13 +1,8 @@
 package com.happy3w.math.section;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.IOException;
 import java.util.Comparator;
 
-@Getter
-@Setter
 public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
 
     public ConcreteSection(Class<T> type, SectionItem<T>... itemArray) {
@@ -40,7 +35,7 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
 
         for (int index = itemFromIndex; index < items.size(); ) {
             SectionItem<T> curItem = items.get(index);
-            int crFrom = comparator.compare(subItem.getTo(), curItem.getFrom());
+            int crFrom = comparator.compare(subItem.getTo(), ItemValueType.to, curItem.getFrom(), ItemValueType.from);
             if (crFrom < 0) {
                 return;
             } else if (crFrom == 0) {
@@ -50,7 +45,7 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
                 return;
             }
 
-            int crTo = comparator.compare(subItem.getTo(), curItem.getTo());
+            int crTo = comparator.compare(subItem.getTo(), ItemValueType.to, curItem.getTo(), ItemValueType.to);
             if (crTo < 0) {
                 curItem.configFrom(subItem.getToValue(), !subItem.isIncludeTo());
                 return;
@@ -70,7 +65,7 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
         SectionItemValue<T> subItemFrom = subItem.getFrom();
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
-            int crFrom = comparator.compare(subItemFrom, item.getFrom());
+            int crFrom = comparator.compare(subItemFrom, ItemValueType.from, item.getFrom(), ItemValueType.from);
             if (crFrom < 0) {
                 return index;
             } else if (crFrom == 0) {
@@ -81,10 +76,10 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
                 return index;
             }
 
-            int crTo = comparator.compare(subItemFrom, item.getTo());
+            int crTo = comparator.compare(subItemFrom, ItemValueType.from, item.getTo(), ItemValueType.to);
             if (crTo < 0) {
                 items.add(index + 1, item.newCopy());
-                item.setTo(new SectionItemValue<>(subItemFrom.getValue(), !subItemFrom.isInclude(), ItemValueType.to));
+                item.setTo(new SectionItemValue<>(subItemFrom.getValue(), !subItemFrom.isInclude()));
                 return index + 1;
             } else if (crTo == 0) {
                 if (subItemFrom.isInclude()) {
@@ -102,7 +97,7 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
         for (int index = itemFromIndex; index < items.size(); ) {
             SectionItem<T> curItem = items.get(index);
             if (index != itemFromIndex) {
-                int crFrom = comparator.compare(newItem.getTo(), curItem.getFrom());
+                int crFrom = comparator.compare(newItem.getTo(), ItemValueType.to, curItem.getFrom(), ItemValueType.from);
                 if (crFrom < 0) {
                     itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
                     return;
@@ -117,7 +112,7 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
                 }
             }
 
-            int crTo = comparator.compare(newItem.getTo(), curItem.getTo());
+            int crTo = comparator.compare(newItem.getTo(), ItemValueType.to, curItem.getTo(), ItemValueType.to);
             if (crTo < 0) {
                 if (itemToUpdate != curItem) {
                     itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo());
@@ -140,7 +135,7 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
     private int unionFromItem(SectionItem<T> newItem) {
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
-            int crFrom = comparator.compare(newItem.getFrom(), item.getFrom());
+            int crFrom = comparator.compare(newItem.getFrom(), ItemValueType.from, item.getFrom(), ItemValueType.from);
             if (crFrom < 0) {
                 items.add(index, newItem.newCopy());
                 return index;
@@ -151,7 +146,7 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
                 return index;
             }
 
-            int crTo = comparator.compare(newItem.getFrom(), item.getTo());
+            int crTo = comparator.compare(newItem.getFrom(), ItemValueType.from, item.getTo(), ItemValueType.to);
             if (crTo < 0) {
                 return index;
             } else if (crTo == 0) {

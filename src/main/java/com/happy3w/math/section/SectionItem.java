@@ -23,11 +23,11 @@ public class SectionItem <T>{
     }
 
     public void configFrom(T from, boolean includeFrom) {
-        this.from = new SectionItemValue<>(from, includeFrom, ItemValueType.from);
+        this.from = new SectionItemValue<>(from, includeFrom);
     }
 
     public void configTo(T to, boolean includeTo) {
-        this.to = new SectionItemValue<>(to, includeTo, ItemValueType.to);
+        this.to = new SectionItemValue<>(to, includeTo);
     }
 
     @Override
@@ -74,12 +74,12 @@ public class SectionItem <T>{
     }
 
     public static <T> SectionItem<T> ofValue(T from, T to) {
-        return new SectionItem<>(new SectionItemValue<>(from, true, ItemValueType.from),
-                new SectionItemValue<>(to, true, ItemValueType.to));
+        return new SectionItem<>(new SectionItemValue<>(from, true),
+                new SectionItemValue<>(to, true));
     }
 
     public static <T> SectionItem<T> ofValue(T from, boolean includeFrom, T to, boolean includeTo) {
-        return new SectionItem<>(new SectionItemValue<>(from, includeFrom, ItemValueType.from),
-                new SectionItemValue<>(to, includeTo, ItemValueType.to));
+        return new SectionItem<>(new SectionItemValue<>(from, includeFrom),
+                new SectionItemValue<>(to, includeTo));
     }
 }

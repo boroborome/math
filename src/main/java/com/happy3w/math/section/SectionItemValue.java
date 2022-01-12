@@ -10,16 +10,14 @@ import lombok.Setter;
 public class SectionItemValue<T> {
     private T value;
     private boolean include;
-    private ItemValueType type;
 
-    public SectionItemValue(T value, boolean include, ItemValueType type) {
+    public SectionItemValue(T value, boolean include) {
         this.value = value;
         this.include = value == null ? false : include;
-        this.type = type;
     }
 
     @Override
     public String toString() {
-        return value + "," + include + "," + type;
+        return value + "," + include;
     }
 }
