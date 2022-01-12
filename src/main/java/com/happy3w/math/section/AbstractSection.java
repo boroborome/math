@@ -54,7 +54,7 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
         return (S) this;
     }
 
-    public S subtract(SectionItem<T> subItem) {
+    public S subtractItem(SectionItem<T> subItem) {
         int itemFromIndex = subFromItem(subItem);
         subToItem(itemFromIndex, subItem);
         return (S) this;

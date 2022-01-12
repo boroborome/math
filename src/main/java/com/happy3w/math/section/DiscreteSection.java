@@ -26,6 +26,7 @@ public class DiscreteSection<T> extends AbstractSection<T, DiscreteSection<T>> {
     @Override
     public DiscreteSection<T> unionItem(SectionItem<T> item) {
         SectionItem<T> newItem = discretizeItem(item);
+
         int itemFromIndex = unionFromItem(newItem);
         int newIndex = tryMerge(itemFromIndex);
 
@@ -34,7 +35,14 @@ public class DiscreteSection<T> extends AbstractSection<T, DiscreteSection<T>> {
         return this;
     }
 
-    private int tryMerge(int itemIndex) {
+    public DiscreteSection<T> unionValue(T value) {
+        return unionItem(new SectionItem<>(
+                new SectionItemValue<>(value, true),
+                new SectionItemValue<>(value, true)
+        ));
+    }
+
+    protected int tryMerge(int itemIndex) {
         if (itemIndex > 0 && itemIndex < items.size()) {
             SectionItem<T> preItem = items.get(itemIndex - 1);
             SectionItem<T> curItem = items.get(itemIndex);
@@ -50,9 +58,16 @@ public class DiscreteSection<T> extends AbstractSection<T, DiscreteSection<T>> {
     }
 
     @Override
-    public DiscreteSection<T> subtract(SectionItem<T> subItem) {
+    public DiscreteSection<T> subtractItem(SectionItem<T> subItem) {
         SectionItem<T> item = discretizeItem(subItem);
-        return super.subtract(item);
+        return super.subtractItem(item);
+    }
+
+    public DiscreteSection<T> subtractValue(T value) {
+        return subtractItem(new SectionItem<>(
+                new SectionItemValue<>(value, true),
+                new SectionItemValue<>(value, true)
+        ));
     }
 
     protected void discretizeItems(List<SectionItem<T>> items) {

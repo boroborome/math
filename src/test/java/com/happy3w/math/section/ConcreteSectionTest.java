@@ -65,36 +65,36 @@ public class ConcreteSectionTest {
     @Test
     public void should_sub_success() {
         Assert.assertEquals("", new ConcreteSection<>(Integer.class)
-                .subtract(SectionItem.ofValue(7, 9))
+                .subtractItem(SectionItem.ofValue(7, 9))
                 .toString());
 
         Assert.assertEquals("[2,5]", new ConcreteSection<>(Integer.class, SectionItem.ofValue(2, 5))
-                .subtract(SectionItem.ofValue(7, 9))
+                .subtractItem(SectionItem.ofValue(7, 9))
                 .toString());
         Assert.assertEquals("[2,5]", new ConcreteSection<>(Integer.class, SectionItem.ofValue(2, 5))
-                .subtract(SectionItem.ofValue(0, 1))
+                .subtractItem(SectionItem.ofValue(0, 1))
                 .toString());
         Assert.assertEquals("(3,5]", new ConcreteSection<>(Integer.class, SectionItem.ofValue(2, 5))
-                .subtract(SectionItem.ofValue(0, 3))
+                .subtractItem(SectionItem.ofValue(0, 3))
                 .toString());
         Assert.assertEquals("[2,2](3,5]", new ConcreteSection<>(Integer.class, SectionItem.ofValue(2, 5))
-                .subtract(SectionItem.ofValue(2, false, 3, true))
+                .subtractItem(SectionItem.ofValue(2, false, 3, true))
                 .toString());
         Assert.assertEquals("(2,5]", new ConcreteSection<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
-                .subtract(SectionItem.ofValue(0, 2))
+                .subtractItem(SectionItem.ofValue(0, 2))
                 .toString());
         Assert.assertEquals("[2,4)", new ConcreteSection<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
-                .subtract(SectionItem.ofValue(4, 5))
+                .subtractItem(SectionItem.ofValue(4, 5))
                 .toString());
         Assert.assertEquals("[2,4)", new ConcreteSection<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
-                .subtract(SectionItem.ofValue(4, 6))
+                .subtractItem(SectionItem.ofValue(4, 6))
                 .toString());
         Assert.assertEquals("[2,3)(4,5]", new ConcreteSection<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
-                .subtract(SectionItem.ofValue(3, 4))
+                .subtractItem(SectionItem.ofValue(3, 4))
                 .toString());
         Assert.assertEquals("(8,9]", new ConcreteSection<>(Comparator.comparing(Function.identity()), SectionItem.ofValue(2, 5))
                         .unionItem(SectionItem.ofValue(8, 9))
-                .subtract(SectionItem.ofValue(null, 8))
+                .subtractItem(SectionItem.ofValue(null, 8))
                 .toString());
     }
 }
