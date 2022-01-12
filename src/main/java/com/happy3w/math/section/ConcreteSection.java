@@ -4,6 +4,10 @@ import java.util.Comparator;
 
 public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
 
+    public ConcreteSection(SectionItem<T>... itemArray) {
+        super(itemArray);
+    }
+
     public ConcreteSection(Class<T> type, SectionItem<T>... itemArray) {
         super(type, itemArray);
     }

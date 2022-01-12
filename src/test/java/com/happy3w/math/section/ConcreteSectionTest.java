@@ -97,4 +97,29 @@ public class ConcreteSectionTest {
                 .subtractItem(SectionItem.ofValue(null, 8))
                 .toString());
     }
+
+    @Test
+    public void should_contains_success() {
+        ConcreteSection<Integer> section2_5 = new ConcreteSection<>(SectionItem.ofValue(2, 5));
+        Assert.assertEquals(false, section2_5.contains(1));
+        Assert.assertEquals(true, section2_5.contains(2));
+        Assert.assertEquals(true, section2_5.contains(3));
+        Assert.assertEquals(true, section2_5.contains(5));
+        Assert.assertEquals(false, section2_5.contains(6));
+
+        ConcreteSection<Integer> section_not_include = new ConcreteSection<>(SectionItem.ofValue(2, false, 5, false));
+        Assert.assertEquals(false, section_not_include.contains(2));
+        Assert.assertEquals(false, section_not_include.contains(5));
+
+        ConcreteSection<Integer> open2Section = new ConcreteSection<>(SectionItem.ofValue(null, false, 2, true))
+                .unionItem(SectionItem.ofValue(5, true, null, false));
+        Assert.assertEquals(true, open2Section.contains(1));
+        Assert.assertEquals(true, open2Section.contains(2));
+        Assert.assertEquals(false, open2Section.contains(3));
+        Assert.assertEquals(true, open2Section.contains(5));
+        Assert.assertEquals(true, open2Section.contains(6));
+
+        Assert.assertEquals(true, new ConcreteSection<Integer>(SectionItem.ofValue(null, false, null, false))
+                .contains(2));
+    }
 }

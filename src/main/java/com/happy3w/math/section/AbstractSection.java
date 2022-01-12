@@ -219,6 +219,25 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
         itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
     }
 
+    public boolean contains(T value) {
+        if (value == null) {
+            return false;
+        }
+
+        for (SectionItem<T> item : items) {
+            int crFrom = itemValueComparator.compareValue(value, item.getFrom(), ItemValueType.from);
+            if (crFrom == 0) {
+                return true;
+            }
+
+            int crTo = itemValueComparator.compareValue(value, item.getTo(), ItemValueType.to);
+
+            if (crFrom >= 0 && crTo <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public String toString() {
