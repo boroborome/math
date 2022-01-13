@@ -3,6 +3,9 @@ package com.happy3w.math.section;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class DiscreteSectionTest {
 
     @Test
@@ -123,5 +126,23 @@ public class DiscreteSectionTest {
 
         DiscreteSection<Integer> reverseSection2 = reverseSection.reverse();
         Assert.assertEquals("[2,5]", reverseSection2.toString());
+    }
+
+    @Test
+    public void should_stream_success() {
+        DiscreteSection<Integer> section = new DiscreteSection<>(DiscretizeCalculators.intCalculator, SectionItem.ofValue(2, 5));
+        Assert.assertEquals(Arrays.asList(2, 3, 4, 5),
+                section.stream()
+                        .collect(Collectors.toList()));
+
+        Assert.assertEquals(Arrays.asList(5, 4, 3, 2),
+                section.streamDesc()
+                        .collect(Collectors.toList()));
+
+//        DiscreteSection<Integer> section2 = new DiscreteSection<>(DiscretizeCalculators.intCalculator, SectionItem.ofValue(2, 5), SectionItem.ofValue(8, null));
+//        Assert.assertEquals(Arrays.asList(2, 3, 4, 5, 8, 9),
+//                section2.stream()
+//                        .limit(6)
+//                        .collect(Collectors.toList()));
     }
 }

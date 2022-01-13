@@ -3,8 +3,11 @@ package com.happy3w.math.section;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -107,5 +110,32 @@ public class DiscreteSection<T> extends AbstractSection<T, DiscreteSection<T>> {
     @Override
     public DiscreteSection<T> newEmptySection() {
         return new DiscreteSection<>(this.discretizeCalculator, this.valueComparator);
+    }
+
+    public Stream<T> stream() {
+        if (items.isEmpty()) {
+            return Stream.empty();
+        }
+
+        boolean startNull = items.get(0).getFrom().getValue() == null;
+        boolean endNull = items.get(items.size() - 1).getTo().getValue() == null;
+        if (startNull && endNull) {
+            throw new IllegalArgumentException("Can not stream DiscreteSection with both null.");
+        }
+
+        return startNull ? streamDesc() : streamAsc();
+    }
+
+    public Stream<T> streamAsc() {
+        return items.stream()
+                .flatMap(item -> item.streamAsc(discretizeCalculator, valueComparator));
+    }
+
+    public Stream<T> streamDesc() {
+        List<SectionItem<T>> descItems = new ArrayList<>(items);
+        Collections.reverse(descItems);
+
+        return descItems.stream()
+                .flatMap(item -> item.streamDesc(discretizeCalculator, valueComparator));
     }
 }

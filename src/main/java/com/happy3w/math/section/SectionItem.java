@@ -4,10 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
-public class SectionItem <T>{
+public class SectionItem<T> {
     public static final String NULL_TEXT = "*";
 
     private SectionItemValue<T> from;
@@ -82,4 +84,24 @@ public class SectionItem <T>{
         return new SectionItem<>(new SectionItemValue<>(from, includeFrom),
                 new SectionItemValue<>(to, includeTo));
     }
+
+    public Stream<T> stream(DiscretizeCalculator<T> discretizeCalculator, Comparator<T> valueComparator) {
+        if (from.getValue() == null && to.getValue() == null) {
+            throw new IllegalArgumentException("Can not stream SectionItem with both null.");
+        }
+        if (from.getValue() != null) {
+            return streamAsc(discretizeCalculator, valueComparator);
+        } else {
+            return streamDesc(discretizeCalculator, valueComparator);
+        }
+    }
+
+    public Stream<T> streamAsc(DiscretizeCalculator<T> discretizeCalculator, Comparator<T> valueComparator) {
+        return SectionItemValue.streamWithStartEnd(from, to, 1, discretizeCalculator, valueComparator);
+    }
+
+    public Stream<T> streamDesc(DiscretizeCalculator<T> discretizeCalculator, Comparator<T> valueComparator) {
+        return SectionItemValue.streamWithStartEnd(to, from, -1, discretizeCalculator, valueComparator);
+    }
+
 }
