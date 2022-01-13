@@ -114,4 +114,14 @@ public class DiscreteSectionTest {
         section1.subtractSection(section2);
         Assert.assertEquals("(*,2]", section1.toString());
     }
+
+    @Test
+    public void should_reverse_success() {
+        DiscreteSection<Integer> section = new DiscreteSection<>(DiscretizeCalculators.intCalculator, SectionItem.ofValue(2, 5));
+        DiscreteSection<Integer> reverseSection = section.reverse();
+        Assert.assertEquals("(*,1][6,*)", reverseSection.toString());
+
+        DiscreteSection<Integer> reverseSection2 = reverseSection.reverse();
+        Assert.assertEquals("[2,5]", reverseSection2.toString());
+    }
 }

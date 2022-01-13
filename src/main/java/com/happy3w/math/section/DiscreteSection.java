@@ -103,4 +103,9 @@ public class DiscreteSection<T> extends AbstractSection<T, DiscreteSection<T>> {
         itemValue.setInclude(false);
         return discretizeValue(itemValue, type);
     }
+
+    @Override
+    public DiscreteSection<T> newEmptySection() {
+        return new DiscreteSection<>(this.discretizeCalculator, this.valueComparator);
+    }
 }

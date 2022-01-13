@@ -21,4 +21,9 @@ public class ConcreteSection<T> extends AbstractSection<T, ConcreteSection<T>> {
         itemValue.setInclude(false);
         return itemValue;
     }
+
+    @Override
+    public ConcreteSection<T> newEmptySection() {
+        return new ConcreteSection<>(this.valueComparator);
+    }
 }

@@ -64,6 +64,10 @@ public class ConcreteSectionTest {
 
     @Test
     public void should_sub_success() {
+        Assert.assertEquals("(6,8]", new ConcreteSection<>(Integer.class, SectionItem.ofValue(5, 8))
+                .subtractItem(SectionItem.ofValue(2, 6))
+                .toString());
+
         Assert.assertEquals("", new ConcreteSection<>(Integer.class)
                 .subtractItem(SectionItem.ofValue(7, 9))
                 .toString());
@@ -122,4 +126,15 @@ public class ConcreteSectionTest {
         Assert.assertEquals(true, new ConcreteSection<Integer>(SectionItem.ofValue(null, false, null, false))
                 .contains(2));
     }
+
+    @Test
+    public void should_reverse_success() {
+        ConcreteSection<Integer> section = new ConcreteSection<>(SectionItem.ofValue(2, 5));
+        ConcreteSection<Integer> reverseSection = section.reverse();
+        Assert.assertEquals("(*,2)(5,*)", reverseSection.toString());
+
+        ConcreteSection<Integer> reverseSection2 = reverseSection.reverse();
+        Assert.assertEquals("[2,5]", reverseSection2.toString());
+    }
+
 }
