@@ -5,7 +5,7 @@ import com.happy3w.math.combination.GroupCombinationMaker;
 import com.happy3w.math.combination.GroupMaker;
 import lombok.Getter;
 import lombok.Setter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;

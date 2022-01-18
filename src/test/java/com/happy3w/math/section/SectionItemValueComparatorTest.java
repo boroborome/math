@@ -1,7 +1,7 @@
 package com.happy3w.math.section;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 import java.util.function.Function;
@@ -15,67 +15,67 @@ public class SectionItemValueComparatorTest {
     public void should_compare_success() {
         SectionItemValueComparator<Integer> comparator = new SectionItemValueComparator<Integer>(Comparator.comparing(Function.identity()));
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(null, true), to,
                 new SectionItemValue<Integer>(2, false), to
         ) > 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(null, true), to,
                 new SectionItemValue<Integer>(2, false), from
         ) > 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, true), to,
                 new SectionItemValue<Integer>(2, false), from
         ) == 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, false), to,
                 new SectionItemValue<Integer>(2, true), from
         ) == 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, false), from,
                 new SectionItemValue<Integer>(2, true), from
         ) == 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, true), from,
                 new SectionItemValue<Integer>(2, true), from
         ) == 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(2, true), from,
                 new SectionItemValue<Integer>(2, false), from
         ) == 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(1, false), from,
                 new SectionItemValue<Integer>(2, false), from
         ) < 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(1, false), from,
                 new SectionItemValue<Integer>(1, false), from
         ) == 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(1, false), from,
                 new SectionItemValue<Integer>(null, false), from
         ) > 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(null, false), from,
                 new SectionItemValue<Integer>(null, false), from
         ) == 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(null, false), from,
                 new SectionItemValue<Integer>(null, false), to
         ) < 0);
 
-        Assert.assertTrue(comparator.compare(
+        Assertions.assertTrue(comparator.compare(
                 new SectionItemValue<Integer>(null, false), to,
                 new SectionItemValue<Integer>(null, false), to
         ) == 0);

@@ -1,7 +1,7 @@
 package com.happy3w.math.combination;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -18,7 +18,7 @@ public class GroupCombinationMakerTest {
                 )
                 .map(it -> it.toString())
                 .collect(Collectors.joining("\n"));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "[[0, 1], [2, 3], [4]]\n" +
                         "[[0, 1], [2, 4], [3]]\n" +
                         "[[0, 1], [3, 4], [2]]\n" +
@@ -47,7 +47,7 @@ public class GroupCombinationMakerTest {
                 )
                 .map(it -> it.toString())
                 .collect(Collectors.joining("\n"));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "[[1, 1], [1, 1], [1]]",
                 finalResult);
     }
@@ -62,7 +62,7 @@ public class GroupCombinationMakerTest {
                 )
                 .map(it -> it.toString())
                 .collect(Collectors.joining("\n"));
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "[[1, 1], [1, 2], [2]]\n" +
                         "[[1, 1], [2, 2], [1]]\n" +
                         "[[1, 2], [1, 2], [1]]",

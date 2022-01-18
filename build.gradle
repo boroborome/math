@@ -1,6 +1,7 @@
 
 group = 'com.happy3w'
 version = '1.0.0'
+
 ext {
 	artifactId = "math"
 
@@ -8,6 +9,9 @@ ext {
 	description = "Some kits for common use"
 	url = 'https://github.com/boroborome/math'
 	developerConnection = 'scm:git@github.com:boroborome/math.git'
+
+	junitVersion='5.8.2'
+	lombokVersion='1.18.22'
 }
 
 apply plugin: 'java-library'
@@ -20,15 +24,23 @@ repositories {
 
 dependencies {
 	api('com.happy3w:java-ext:1.0.0')
-	compileOnly 'org.projectlombok:lombok:1.18.12'
+	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
-	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-	testImplementation 'junit:junit:4.12'
-	testImplementation 'com.alibaba:fastjson:1.2.29'
-	testCompileOnly 'org.projectlombok:lombok:1.18.12'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+	testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+	testCompile "org.junit.jupiter:junit-jupiter-params:${junitVersion}"
+	testImplementation 'com.alibaba:fastjson:1.2.79'
+	testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+	testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 //compileJava.options.compilerArgs.add("-Xlint:unchecked")
 [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
 
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "skipped", "failed"
+	}
+}

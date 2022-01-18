@@ -4,8 +4,8 @@ import com.happy3w.java.ext.MapUtils;
 import com.happy3w.java.ext.Pair;
 import lombok.Getter;
 import lombok.Setter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,8 +32,8 @@ public class DimCombinationMakerTest {
                 .map(d -> createConfig(d, configMap))
                 .collect(Collectors.toList());
 
-        Assert.assertEquals(3 * 3, myConfigs.size());
-        Assert.assertTrue(
+        Assertions.assertEquals(3 * 3, myConfigs.size());
+        Assertions.assertTrue(
                 Arrays.asList(
                         "[[d1:null, d2:d2v1], [d1:1, d2:null], [d1:null, d2:null]]",
                         "[[d1:1, d2:null], [d1:null, d2:d2v1], [d1:null, d2:null]]").contains(
@@ -80,7 +80,7 @@ public class DimCombinationMakerTest {
                 .build()
                 .generateNormal()
                 .collect(Collectors.toList());
-        Assert.assertEquals(Arrays.asList(
+        Assertions.assertEquals(Arrays.asList(
                 Arrays.asList(Pair.of("d1", "1"), Pair.of("d2", "d2v1")),
                 Arrays.asList(Pair.of("d1", "2"), Pair.of("d2", "d2v1")),
                 Arrays.asList(Pair.of("d1", "1"), Pair.of("d2", "d2v2")),
@@ -98,7 +98,7 @@ public class DimCombinationMakerTest {
                 .build()
                 .generateSimple()
                 .collect(Collectors.toList());
-        Assert.assertEquals(Arrays.asList(
+        Assertions.assertEquals(Arrays.asList(
                 Arrays.asList("1", "d2v1"),
                 Arrays.asList("2", "d2v1"),
                 Arrays.asList("1", "d2v2"),
