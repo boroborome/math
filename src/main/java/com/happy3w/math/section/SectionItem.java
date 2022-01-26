@@ -51,30 +51,6 @@ public class SectionItem<T> {
                 .append(to.isInclude() ? ']' : ')');
     }
 
-    public boolean isIncludeTo() {
-        return to.isInclude();
-    }
-
-    public void setIncludeTo(boolean include) {
-        to.setInclude(include);
-    }
-
-    public boolean isIncludeFrom() {
-        return from.isInclude();
-    }
-
-    public void setIncludeFrom(boolean include) {
-        from.setInclude(include);
-    }
-
-    public T getFromValue() {
-        return from.getValue();
-    }
-
-    public T getToValue() {
-        return to.getValue();
-    }
-
     public static <T> SectionItem<T> ofValue(T from, T to) {
         return new SectionItem<>(new SectionItemValue<>(from, true),
                 new SectionItemValue<>(to, true));

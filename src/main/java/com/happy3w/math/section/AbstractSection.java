@@ -118,11 +118,12 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
         SectionItemValue<T> subItemFrom = subItem.getFrom();
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
-            int crFrom = itemValueComparator.compare(subItemFrom, ItemValueType.from, item.getFrom(), ItemValueType.from);
+            SectionItemValue<T> itemFrom = item.getFrom();
+            int crFrom = itemValueComparator.compare(subItemFrom, ItemValueType.from, itemFrom, ItemValueType.from);
             if (crFrom < 0) {
                 return index;
             } else if (crFrom == 0) {
-                if (item.isIncludeFrom() && !subItemFrom.isInclude()) {
+                if (itemFrom.isInclude() && !subItemFrom.isInclude()) {
                     items.add(index, SectionItem.ofValue(subItemFrom.getValue(), true, subItemFrom.getValue(), true));
                     return index + 1;
                 }
@@ -151,24 +152,27 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
      * @return return where from is set in
      */
     protected int unionFromItem(SectionItem<T> newItem) {
+        SectionItemValue<T> newItemFrom = newItem.getFrom();
         for (int index = 0; index < items.size(); index++) {
             SectionItem<T> item = items.get(index);
-            int crFrom = itemValueComparator.compare(newItem.getFrom(), ItemValueType.from, item.getFrom(), ItemValueType.from);
+            SectionItemValue<T> itemFrom = item.getFrom();
+            int crFrom = itemValueComparator.compare(newItemFrom, ItemValueType.from, itemFrom, ItemValueType.from);
             if (crFrom < 0) {
                 items.add(index, newItem.newCopy());
                 return index;
             } else if (crFrom == 0) {
-                if (newItem.isIncludeFrom()) {
-                    item.setIncludeFrom(true);
+                if (newItemFrom.isInclude()) {
+                    itemFrom.setInclude(true);
                 }
                 return index;
             }
 
-            int crTo = itemValueComparator.compare(newItem.getFrom(), ItemValueType.from, item.getTo(), ItemValueType.to);
+            SectionItemValue<T> itemTo = item.getTo();
+            int crTo = itemValueComparator.compare(newItemFrom, ItemValueType.from, itemTo, ItemValueType.to);
             if (crTo < 0) {
                 return index;
             } else if (crTo == 0) {
-                if (item.isIncludeTo() || newItem.isIncludeFrom()) {
+                if (itemTo.isInclude() || newItemFrom.isInclude()) {
                     return index;
                 } else {
                     int newIndex = index + 1;
@@ -184,34 +188,37 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
 
     protected void unionToItem(int itemFromIndex, SectionItem<T> newItem) {
         SectionItem<T> itemToUpdate = items.get(itemFromIndex);
+        SectionItemValue<T> newItemTo = newItem.getTo();
         for (int index = itemFromIndex; index < items.size(); ) {
             SectionItem<T> curItem = items.get(index);
+            SectionItemValue<T> curItemFrom = curItem.getFrom();
+            SectionItemValue<T> curItemTo = curItem.getTo();
             if (index != itemFromIndex) {
-                int crFrom = itemValueComparator.compare(newItem.getTo(), ItemValueType.to, curItem.getFrom(), ItemValueType.from);
+                int crFrom = itemValueComparator.compare(newItemTo, ItemValueType.to, curItemFrom, ItemValueType.from);
                 if (crFrom < 0) {
-                    itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
+                    itemToUpdate.configTo(newItemTo.getValue(), newItemTo.isInclude());
                     return;
                 } else if (crFrom == 0) {
-                    if (curItem.isIncludeFrom() || newItem.isIncludeTo()) {
-                        itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo());
+                    if (curItemFrom.isInclude() || newItemTo.isInclude()) {
+                        itemToUpdate.configTo(curItemTo.getValue(), curItemTo.isInclude());
                         items.remove(index);
                     } else {
-                        itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
+                        itemToUpdate.configTo(newItemTo.getValue(), newItemTo.isInclude());
                     }
                     return;
                 }
             }
 
-            int crTo = itemValueComparator.compare(newItem.getTo(), ItemValueType.to, curItem.getTo(), ItemValueType.to);
+            int crTo = itemValueComparator.compare(newItemTo, ItemValueType.to, curItemTo, ItemValueType.to);
             if (crTo < 0) {
                 if (itemToUpdate != curItem) {
-                    itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo());
+                    itemToUpdate.configTo(curItemTo.getValue(), curItemTo.isInclude());
                     items.remove(index);
                 }
                 return;
             }
             if (crTo == 0) {
-                itemToUpdate.configTo(curItem.getToValue(), curItem.isIncludeTo() || newItem.isIncludeTo());
+                itemToUpdate.configTo(curItemTo.getValue(), curItemTo.isInclude() || newItemTo.isInclude());
             }
             if (itemToUpdate != curItem) {
                 items.remove(index);
@@ -219,7 +226,7 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
                 index++;
             }
         }
-        itemToUpdate.configTo(newItem.getToValue(), newItem.isIncludeTo());
+        itemToUpdate.configTo(newItemTo.getValue(), newItemTo.isInclude());
     }
 
     public abstract S newEmptySection();
