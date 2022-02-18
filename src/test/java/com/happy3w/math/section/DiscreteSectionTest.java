@@ -3,7 +3,9 @@ package com.happy3w.math.section;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 public class DiscreteSectionTest {
@@ -106,6 +108,16 @@ public class DiscreteSectionTest {
 
         section1.subtractSection(section2);
         Assertions.assertEquals("", section1.toString());
+    }
+
+
+    @Test
+    public void should_subtract_section_to_empty_when_same_success() {
+        Date start = Timestamp.valueOf("2022-02-16 00:00:00");
+        Date end = Timestamp.valueOf("2022-02-18 00:00:00");
+        DiscreteSection<Date> result = new DiscreteSection<>(DiscretizeCalculators.dateCalculator, SectionItem.ofValue(start, true, end, true))
+                .subtractItem(SectionItem.ofValue(start, true, end, true));
+        Assertions.assertEquals("", result.toString());
     }
 
     @Test

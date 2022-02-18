@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Getter
@@ -36,18 +37,18 @@ public class SectionItem<T> {
     public String toString() {
         StringBuilder buf = new StringBuilder();
         try {
-            output(buf, NULL_TEXT, NULL_TEXT);
+            output(buf, Object::toString, NULL_TEXT, NULL_TEXT);
         } catch (IOException e) {
             throw new RuntimeException("Unexpected exception.", e);
         }
         return buf.toString();
     }
 
-    public void output(Appendable buf, String nullFrom, String nullTo) throws IOException {
+    public void output(Appendable buf, Function<T, String> valueFormatter, String nullFrom, String nullTo) throws IOException {
         buf.append(from.isInclude() ? '[' : '(')
-                .append(from.getValue() == null ? nullFrom : from.getValue().toString())
+                .append(from.getValue() == null ? nullFrom : valueFormatter.apply(from.getValue()))
                 .append(',')
-                .append(to.getValue() == null ? nullTo : to.getValue().toString())
+                .append(to.getValue() == null ? nullTo : valueFormatter.apply(to.getValue()))
                 .append(to.isInclude() ? ']' : ')');
     }
 

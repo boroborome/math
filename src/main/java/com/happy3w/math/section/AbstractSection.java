@@ -259,17 +259,17 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
 
     @Override
     public String toString() {
-        return formatText(SectionItem.NULL_TEXT, SectionItem.NULL_TEXT, SPLITER);
+        return formatText(Object::toString, SectionItem.NULL_TEXT, SectionItem.NULL_TEXT, SPLITER);
     }
 
-    public String formatText(String nullFrom, String nullTo, String spliter) {
+    public String formatText(Function<T, String> valueFormatter, String nullFrom, String nullTo, String spliter) {
         StringBuilder buf = new StringBuilder();
         try {
             for (SectionItem<T> item : items) {
                 if (buf.length() > 0) {
                     buf.append(spliter);
                 }
-                item.output(buf, nullFrom, nullTo);
+                item.output(buf, valueFormatter, nullFrom, nullTo);
             }
         } catch (IOException e) {
             throw new RuntimeException("Unexpected error.", e);
