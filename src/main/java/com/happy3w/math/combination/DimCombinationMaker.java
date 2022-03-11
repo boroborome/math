@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +181,20 @@ public class DimCombinationMaker<K, V> {
                 throw new UnsupportedOperationException("dimensionName can not be null.");
             }
             generator.dimensions.add(Pair.ofList(dimensionName, values));
+            return this;
+        }
+
+        /**
+         * Add a dimension
+         * @param dimensionName Dimension name, Must not be null
+         * @param values dimension values
+         * @return This builder
+         */
+        public CombinationGeneratorBuilder<K, V> dimensionList(K dimensionName, Collection<V> values) {
+            if (dimensionName == null) {
+                throw new UnsupportedOperationException("dimensionName can not be null.");
+            }
+            generator.dimensions.add(new Pair<>(dimensionName, new ArrayList<>(values)));
             return this;
         }
 
