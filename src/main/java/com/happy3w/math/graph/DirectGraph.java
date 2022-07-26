@@ -60,4 +60,18 @@ public class DirectGraph<NK, NV, EK, EV> {
     public GraphNode<NK, NV, EK, EV> node(NK nodeId) {
         return nodes.get(nodeId);
     }
+
+    public void initIncomeWithOutcome() {
+        nodeStream()
+                .flatMap(GraphNode::outcomeStream)
+                .forEach(outcome -> node(outcome.getTo())
+                        .withIncome(outcome));
+    }
+
+    public void initOutcomeWithIncome() {
+        nodeStream()
+                .flatMap(GraphNode::incomeStream)
+                .forEach(income -> node(income.getFrom())
+                        .withOutcome(income));
+    }
 }
