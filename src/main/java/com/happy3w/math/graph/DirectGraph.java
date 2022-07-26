@@ -1,10 +1,13 @@
 package com.happy3w.math.graph;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+@Getter
 public class DirectGraph<NK, NV, EK, EV> {
     private Map<NK, GraphNode<NK, NV, EK, EV>> nodes = new HashMap<>();
 
