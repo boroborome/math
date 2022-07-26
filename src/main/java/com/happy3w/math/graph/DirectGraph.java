@@ -57,7 +57,7 @@ public class DirectGraph<NK, NV, EK, EV> {
         return nodes.size();
     }
 
-    public GraphNode<NK, NV, EK, EV> node(NV nodeId) {
+    public GraphNode<NK, NV, EK, EV> node(NK nodeId) {
         return nodes.get(nodeId);
     }
 }
