@@ -1,6 +1,7 @@
 package com.happy3w.math.tree;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface TreeNode<T> {
@@ -22,4 +23,14 @@ public interface TreeNode<T> {
                             .flatMap(TreeNode::nodeStream)
         );
     }
+
+    default TreeNode<T> cloneNode() {
+        List<TreeNode<T>> subNodes = getSubNodes();
+        List<TreeNode<T>> newSubNodes = subNodes == null
+                ? null
+                : subNodes.stream().map(TreeNode::cloneNode).collect(Collectors.toList());
+        return cloneWithSubNodes(newSubNodes);
+    }
+
+    TreeNode<T> cloneWithSubNodes(List<TreeNode<T>> newSubNodes);
 }

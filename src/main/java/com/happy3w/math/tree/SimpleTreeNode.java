@@ -26,4 +26,9 @@ public class SimpleTreeNode<T> implements WritableTreeNode<T> {
         }
         subNodes.add(node);
     }
+
+    @Override
+    public TreeNode<T> cloneWithSubNodes(List<TreeNode<T>> newSubNodes) {
+        return new SimpleTreeNode<>(data, newSubNodes);
+    }
 }
