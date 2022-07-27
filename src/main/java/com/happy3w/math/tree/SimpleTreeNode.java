@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SimpleTreeNode<T> implements TreeNode<T> {
+public class SimpleTreeNode<T> implements WritableTreeNode<T> {
     private T data;
     private List<TreeNode<T>> subNodes;
 
