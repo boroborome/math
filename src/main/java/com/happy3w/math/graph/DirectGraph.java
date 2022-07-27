@@ -3,9 +3,14 @@ package com.happy3w.math.graph;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -95,5 +100,30 @@ public class DirectGraph<NK, NV, EK, EV> {
                 .forEach(income -> node(income.getFrom()).removeOutcome(income));
         node.outcomeStream()
                 .forEach(outcome -> node(outcome.getTo()).removeIncome(outcome));
+    }
+
+    public DirectGraph<NK, NV, EK, EV> cutSubGraph(
+            Collection<NK> startIds,
+            Function<GraphNode<NK, NV, EK, EV>, Stream<NK>> spreadLogic) {
+        Set<NK> idsInPath = collectIdInPath(startIds, spreadLogic);
+        return filterNodes(item -> idsInPath.contains(item.getId()));
+    }
+
+    public Set<NK> collectIdInPath(
+            Collection<NK> startIds,
+            Function<GraphNode<NK, NV, EK, EV>, Stream<NK>> spreadLogic) {
+        Set<NK> idsInPath = new HashSet<>();
+        Stack<NK> accNodeIdStack = new Stack<>();
+        accNodeIdStack.addAll(startIds);
+        while (!accNodeIdStack.isEmpty()) {
+            NK nodeId = accNodeIdStack.pop();
+            idsInPath.add(nodeId);
+
+            spreadLogic.apply(node(nodeId))
+                    .filter(fromId -> !idsInPath.contains(fromId))
+                    .forEach(accNodeIdStack::push);
+        }
+
+        return idsInPath;
     }
 }
