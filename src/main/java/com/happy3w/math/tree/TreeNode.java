@@ -1,6 +1,7 @@
 package com.happy3w.math.tree;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +23,23 @@ public interface TreeNode<T> {
                     getSubNodes().stream()
                             .flatMap(TreeNode::nodeStream)
         );
+    }
+
+    default Stream<TreeNode<T>> allSubNodeStream() {
+        return beLeafNode()
+                ? Stream.empty()
+                : getSubNodes().stream()
+                        .flatMap(TreeNode::nodeStream);
+    }
+
+    default <R> Stream<R> allSubNodeStream(BiFunction<TreeNode<T>, TreeNode<T>, R> itemCreator) {
+        List<TreeNode<T>> subNodes = getSubNodes();
+
+        if (subNodes == null) {
+            return Stream.empty();
+        }
+        return subNodes.stream()
+                .flatMap(item -> Stream.concat(Stream.of(itemCreator.apply(item, this)), item.allSubNodeStream(itemCreator)));
     }
 
     default TreeNode<T> cloneNode() {
