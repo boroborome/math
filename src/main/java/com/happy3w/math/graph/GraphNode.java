@@ -50,4 +50,17 @@ public class GraphNode<NK, NV, EK, EV> {
         return incomes == null ? Stream.empty() : incomes.values().stream();
     }
 
+    public void removeOutcome(GraphEdge<EK, EV, NK> outcome) {
+        if (outcomes == null || outcome == null) {
+            return;
+        }
+        outcomes.remove(outcome.getId());
+    }
+
+    public void removeIncome(GraphEdge<EK, EV, NK> income) {
+        if (incomes == null || income == null) {
+            return;
+        }
+        incomes.remove(income.getId());
+    }
 }

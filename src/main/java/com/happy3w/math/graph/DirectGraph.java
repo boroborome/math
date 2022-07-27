@@ -2,9 +2,11 @@ package com.happy3w.math.graph;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @Getter
@@ -76,5 +78,22 @@ public class DirectGraph<NK, NV, EK, EV> {
                 .flatMap(GraphNode::incomeStream)
                 .forEach(income -> node(income.getFrom())
                         .withOutcome(income));
+    }
+
+    public DirectGraph<NK, NV, EK, EV> filterNodes(Predicate<GraphNode<NK, NV, EK, EV>> nodeChecker) {
+        for (GraphNode<NK, NV, EK, EV> node : new ArrayList<>(nodes.values())) {
+            if (!nodeChecker.test(node)) {
+                cleanRelation(node);
+                nodes.remove(node.getId());
+            }
+        }
+        return this;
+    }
+
+    private void cleanRelation(GraphNode<NK, NV, EK, EV> node) {
+        node.incomeStream()
+                .forEach(income -> node(income.getFrom()).removeOutcome(income));
+        node.outcomeStream()
+                .forEach(outcome -> node(outcome.getTo()).removeIncome(outcome));
     }
 }
