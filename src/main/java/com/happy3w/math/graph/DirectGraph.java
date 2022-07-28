@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @Getter
@@ -19,9 +20,12 @@ public class DirectGraph<NK, NV, EK, EV> {
     private Map<NK, GraphNode<NK, NV, EK, EV>> nodes = new HashMap<>();
 
     public GraphNode<NK, NV, EK, EV> takeNode(NK id, NV value) {
-        GraphNode<NK, NV, EK, EV> node = nodes.computeIfAbsent(id, key -> new GraphNode<>(id));
-        node.setValue(value);
-        return node;
+        return takeNode(id, () -> value);
+    }
+
+    public GraphNode<NK, NV, EK, EV> takeNode(NK id, Supplier<NV> valueSupplier) {
+        return nodes.computeIfAbsent(id, key -> new GraphNode<NK, NV, EK, EV>(id)
+                .withValue(valueSupplier.get()));
     }
 
     public GraphNode<NK, NV, EK, EV> takeNode(NK id) {

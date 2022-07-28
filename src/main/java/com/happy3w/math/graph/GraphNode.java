@@ -20,6 +20,11 @@ public class GraphNode<NK, NV, EK, EV> {
         this.id = id;
     }
 
+    public GraphNode<NK, NV, EK, EV> withValue(NV value) {
+        this.value = value;
+        return this;
+    }
+
     public Stream<EV> outcomeValues() {
         return outcomes == null
                 ? Stream.empty()
