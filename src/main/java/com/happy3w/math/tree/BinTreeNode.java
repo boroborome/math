@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 import java.util.StringTokenizer;
@@ -14,7 +15,7 @@ import java.util.function.Supplier;
 
 @Getter
 @Setter
-public class BinTreeNode<T> {
+public class BinTreeNode<T> implements WritableTreeNode<T> {
     private T data;
     private BinTreeNode<T> left;
     private BinTreeNode<T> right;
@@ -152,6 +153,30 @@ public class BinTreeNode<T> {
             if (node.left != null) {
                 nodeStack.push(node.left);
             }
+        }
+    }
+
+    @Override
+    public List<TreeNode<T>> getSubNodes() {
+        return Arrays.asList(left, right);
+    }
+
+    @Override
+    public TreeNode<T> cloneWithSubNodes(List<TreeNode<T>> newSubNodes) {
+        BinTreeNode<T> newNode = new BinTreeNode<>();
+        newNode.setData(data);
+        newNode.setSubNodes(newSubNodes);
+        return newNode;
+    }
+
+    @Override
+    public void setSubNodes(List<TreeNode<T>> subNodes) {
+        if (subNodes == null || subNodes.isEmpty()) {
+            left = null;
+            right = null;
+        } else {
+            left = (BinTreeNode<T>) subNodes.get(0);
+            right = (subNodes.size() > 1) ? (BinTreeNode<T>) subNodes.get(1) : null;
         }
     }
 }

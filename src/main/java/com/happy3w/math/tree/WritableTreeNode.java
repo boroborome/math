@@ -41,7 +41,7 @@ public interface WritableTreeNode<T> extends TreeNode<T> {
                     if (checker.test(subItem)) {
                         queue.add(subItem);
                         return Stream.of(subItem);
-                    } else if (subItem.beLeafNode()) {
+                    } else if (subItem == null || subItem.beLeafNode()) {
                         return Stream.empty();
                     } else {
                         return filterNodes(subItem.getSubNodes(), checker, queue);
