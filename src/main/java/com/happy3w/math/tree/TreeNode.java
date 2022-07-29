@@ -1,7 +1,13 @@
 package com.happy3w.math.tree;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 import java.util.List;
+import java.util.Stack;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +20,10 @@ public interface TreeNode<T> {
     }
 
     List<TreeNode<T>> getSubNodes();
+
+    default Stream<TreeNode<T>> subNodeStream() {
+        return beLeafNode() ? Stream.empty() : getSubNodes().stream();
+    }
 
     default Stream<TreeNode<T>> nodeStream() {
         return beLeafNode()
@@ -51,4 +61,32 @@ public interface TreeNode<T> {
     }
 
     TreeNode<T> cloneWithSubNodes(List<TreeNode<T>> newSubNodes);
+
+    default <NT> NT mapTree(Function<TreeNode<T>, NT> nodeConvertor,
+                            BiConsumer<NT, NT> newNodeAccepter) {
+        NT head = nodeConvertor.apply(this);
+        Stack<NodeHolder<TreeNode<T>, NT>> digStack = new Stack<>();
+        digStack.push(new NodeHolder<>(this, head));
+
+        while (!digStack.isEmpty()) {
+            NodeHolder<TreeNode<T>, NT> curHolder = digStack.pop();
+            NT newNode = curHolder.getNewNode();
+            curHolder.treeNode.subNodeStream()
+                    .forEach(subNode -> {
+                        NT newSubNode = nodeConvertor.apply(subNode);
+                        newNodeAccepter.accept(newSubNode, newNode);
+                        if (!subNode.beLeafNode()) {
+                            digStack.push(new NodeHolder<>(subNode, newSubNode));
+                        }
+                    });
+        }
+        return head;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    class NodeHolder<TT, NT> {
+        private TT treeNode;
+        private NT newNode;
+    }
 }
