@@ -14,7 +14,7 @@ class ScIteratorTest {
     void should_enum_success_with_tree() {
         DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4"});
         List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.keys().collect(Collectors.toList()))
+                .map(n -> n.idStream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(
@@ -31,7 +31,7 @@ class ScIteratorTest {
     void should_enum_success_with_single_call() {
         DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2"});
         List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.keys().collect(Collectors.toList()))
+                .map(n -> n.idStream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(
@@ -46,7 +46,7 @@ class ScIteratorTest {
     void should_enum_success_with_small_circle() {
         DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M2"});
         List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.keys().collect(Collectors.toList()))
+                .map(n -> n.idStream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(
@@ -62,7 +62,7 @@ class ScIteratorTest {
     void should_enum_success_with_big_circle() {
         DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M1"});
         List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.keys().collect(Collectors.toList()))
+                .map(n -> n.idStream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(
@@ -77,7 +77,7 @@ class ScIteratorTest {
     void should_enum_success_with_double_circle() {
         DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M2", "M3->M4"});
         List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.keys().collect(Collectors.toList()))
+                .map(n -> n.idStream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(
@@ -92,7 +92,7 @@ class ScIteratorTest {
     void should_enum_success_with_self_circle() {
         DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M2"});
         List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.keys().collect(Collectors.toList()))
+                .map(n -> n.idStream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(

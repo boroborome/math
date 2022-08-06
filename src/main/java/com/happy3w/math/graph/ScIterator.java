@@ -16,7 +16,7 @@ public class ScIterator<NK, NV, EK, EV> extends NeedFindIterator<ScNode<NK, NV, 
     private final Map<NK, GraphNode<NK, NV, EK, EV>> nodesToDeal;
 
     private Stack<CircleInfo<NK>> candidateCircles = new Stack<>();
-    private Stack<NK> keyPath = new Stack<>();
+    private Stack<NK> idPath = new Stack<>();
 
     public ScIterator(Map<NK, GraphNode<NK, NV, EK, EV>> nodes) {
         this.nodesToDeal = new HashMap<>(nodes);
@@ -24,74 +24,74 @@ public class ScIterator<NK, NV, EK, EV> extends NeedFindIterator<ScNode<NK, NV, 
 
     @Override
     protected NullableOptional<ScNode<NK, NV, EK, EV>> findNext() {
-        ScNode<NK, NV, EK, EV> leafHolder = findLeafHolder();
-        if (leafHolder == null) {
+        ScNode<NK, NV, EK, EV> leafNode = findLeafNode();
+        if (leafNode == null) {
             return NullableOptional.empty();
         } else {
-            leafHolder.keys()
+            leafNode.idStream()
                     .forEach(nodesToDeal::remove);
-            return NullableOptional.of(leafHolder);
+            return NullableOptional.of(leafNode);
         }
     }
 
-    private ScNode<NK, NV, EK, EV> findLeafHolder() {
+    private ScNode<NK, NV, EK, EV> findLeafNode() {
         while (!nodesToDeal.isEmpty()) {
-            SingleScNode<NK, NV, EK, EV> curHolder;
-            if (!keyPath.isEmpty()) {
-                NK lastKey = keyPath.pop();
-                GraphNode<NK, NV, EK, EV> graphNode = nodesToDeal.get(lastKey);
-                curHolder = SingleScNode.from(graphNode);
+            SingleScNode<NK, NV, EK, EV> curScNode;
+            if (!idPath.isEmpty()) {
+                NK lastId = idPath.pop();
+                GraphNode<NK, NV, EK, EV> graphNode = nodesToDeal.get(lastId);
+                curScNode = SingleScNode.from(graphNode);
             } else if (!candidateCircles.isEmpty()) {
                 CircleInfo<NK> curCircle = candidateCircles.pop();
-                NK newStartMethod = curCircle.nextNewStartNode();
-                if (newStartMethod == null) {
-                    keyPath.addAll(curCircle.getPathFromParent());
-                    return new CombineScNode(codeToHolder(curCircle.getCircle(), nodesToDeal::get));
+                NK newStartNode = curCircle.nextNewStartNode();
+                if (newStartNode == null) {
+                    idPath.addAll(curCircle.getPathFromParent());
+                    return new CombineScNode(idToNode(curCircle.getCircle(), nodesToDeal::get));
                 }
                 candidateCircles.push(curCircle);
-                GraphNode<NK, NV, EK, EV> graphNode = nodesToDeal.get(newStartMethod);
+                GraphNode<NK, NV, EK, EV> graphNode = nodesToDeal.get(newStartNode);
                 if (graphNode == null) {
                     continue;
                 }
-                curHolder = SingleScNode.from(graphNode);
+                curScNode = SingleScNode.from(graphNode);
             } else {
                 GraphNode<NK, NV, EK, EV> graphNode = nodesToDeal.values().iterator().next();
-                curHolder = SingleScNode.from(graphNode);
+                curScNode = SingleScNode.from(graphNode);
             }
 
-            NK curCode = curHolder.getGraphNode().getId();
-            CircleInfo<NK> curCircle = CircleInfo.createNewCircle(keyPath, curCode, nodesToDeal::get);
+            NK curId = curScNode.getGraphNode().getId();
+            CircleInfo<NK> curCircle = CircleInfo.createNewCircle(idPath, curId, nodesToDeal::get);
             if (curCircle != null) {
-                keyPath.clear();
+                idPath.clear();
                 candidateCircles.push(curCircle);
-            } else if (CircleInfo.mergeIntoBigCircle(keyPath, curCode, candidateCircles, nodesToDeal::get)) {
-                keyPath.clear();
+            } else if (CircleInfo.mergeIntoBigCircle(idPath, curId, candidateCircles, nodesToDeal::get)) {
+                idPath.clear();
             } else {
-                SingleScNode<NK, NV, EK, EV> calleeHolder = pickAnyCallee(curHolder.getGraphNode(), nodesToDeal::get);
-                if (calleeHolder == null) {
-                    return curHolder;
+                SingleScNode<NK, NV, EK, EV> outNode = pickAnyOutNode(curScNode.getGraphNode(), nodesToDeal::get);
+                if (outNode == null) {
+                    return curScNode;
                 }
 
-                keyPath.push(curCode);
-                keyPath.push(calleeHolder.getGraphNode().getId());
+                idPath.push(curId);
+                idPath.push(outNode.getGraphNode().getId());
             }
         }
         return null;
     }
-    private SingleScNode<NK, NV, EK, EV> pickAnyCallee(GraphNode<NK, NV, EK, EV> node,
-                                                       Function<NK, GraphNode<NK, NV, EK, EV>> holderMapper) {
+    private SingleScNode<NK, NV, EK, EV> pickAnyOutNode(GraphNode<NK, NV, EK, EV> node,
+                                                        Function<NK, GraphNode<NK, NV, EK, EV>> nodeMapper) {
         return node.outcomeStream()
-                .map(edge -> holderMapper.apply(edge.getTo()))
+                .map(edge -> nodeMapper.apply(edge.getTo()))
                 .filter(Objects::nonNull)
                 .map(SingleScNode::from)
                 .findFirst()
                 .orElse(null);
     }
 
-    private List<GraphNode<NK, NV, EK, EV>> codeToHolder(Collection<NK> codes,
-                                                         Function<NK, GraphNode<NK, NV, EK, EV>> codeHolderTranslator) {
-        return codes.stream()
-                .map(codeHolderTranslator)
+    private List<GraphNode<NK, NV, EK, EV>> idToNode(Collection<NK> ids,
+                                                     Function<NK, GraphNode<NK, NV, EK, EV>> idNodeTranslator) {
+        return ids.stream()
+                .map(idNodeTranslator)
                 .collect(Collectors.toList());
     }
 }

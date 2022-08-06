@@ -13,7 +13,7 @@ public class SingleScNode<NK, NV, EK, EV> implements ScNode<NK, NV, EK, EV> {
     }
 
     @Override
-    public Stream<NK> keys() {
+    public Stream<NK> idStream() {
         return graphNode == null ? Stream.empty() : Stream.of(graphNode.getId());
     }
 

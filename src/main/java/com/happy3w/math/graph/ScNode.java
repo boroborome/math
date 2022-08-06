@@ -10,5 +10,5 @@ import java.util.stream.Stream;
  * @param <EV> Edge Value Type
  */
 public interface ScNode<NK, NV, EK, EV> {
-    public abstract Stream<NK> keys();
+    Stream<NK> idStream();
 }

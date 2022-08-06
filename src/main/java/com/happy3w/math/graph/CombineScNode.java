@@ -14,7 +14,7 @@ public class CombineScNode<NK, NV, EK, EV> implements ScNode<NK, NV, EK, EV> {
     }
 
     @Override
-    public Stream<NK> keys() {
+    public Stream<NK> idStream() {
         return graphNodes == null || graphNodes.isEmpty()
                 ? Stream.empty()
                 : graphNodes.stream().map(GraphNode::getId);
