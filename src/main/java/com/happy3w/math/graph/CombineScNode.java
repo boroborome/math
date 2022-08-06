@@ -2,8 +2,8 @@ package com.happy3w.math.graph;
 
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Getter
 public class CombineScNode<NK, NV, EK, EV> implements ScNode<NK, NV, EK, EV> {
@@ -14,14 +14,9 @@ public class CombineScNode<NK, NV, EK, EV> implements ScNode<NK, NV, EK, EV> {
     }
 
     @Override
-    public Stream<NK> idStream() {
-        return nodeStream().map(GraphNode::getId);
-    }
-
-    @Override
-    public Stream<GraphNode<NK, NV, EK, EV>> nodeStream() {
+    public List<GraphNode<NK, NV, EK, EV>> nodeList() {
         return graphNodes == null || graphNodes.isEmpty()
-                ? Stream.empty()
-                : graphNodes.stream();
+                ? Collections.EMPTY_LIST
+                : graphNodes;
     }
 }
