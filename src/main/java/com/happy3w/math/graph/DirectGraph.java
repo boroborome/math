@@ -9,11 +9,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterators;
 import java.util.Stack;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Getter
 public class DirectGraph<NK, NV, EK, EV> {
@@ -129,5 +131,17 @@ public class DirectGraph<NK, NV, EK, EV> {
         }
 
         return idsInPath;
+    }
+
+    public ScIterator<NK, NV, EK, EV> scIterator() {
+        return new ScIterator<>(this);
+    }
+
+    public Stream<ScNode<NK, NV, EK, EV>> scNodeStream() {
+        return StreamSupport.stream(Spliterators.spliterator(scIterator(), Long.MAX_VALUE, 0), false);
+    }
+
+    public boolean isEmpty() {
+        return nodes.isEmpty();
     }
 }
