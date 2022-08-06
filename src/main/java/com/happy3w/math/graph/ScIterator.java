@@ -13,15 +13,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ScIterator<NK, NV, EK, EV> extends NeedFindIterator<ScNode<NK, NV, EK, EV>> {
-    private final DirectGraph<NK, NV, EK, EV> graph;
     private final Map<NK, GraphNode<NK, NV, EK, EV>> nodesToDeal;
 
     private Stack<CircleInfo<NK>> candidateCircles = new Stack<>();
     private Stack<NK> keyPath = new Stack<>();
 
-    public ScIterator(DirectGraph<NK, NV, EK, EV> graph) {
-        this.graph = graph;
-        this.nodesToDeal = new HashMap<>(graph.getNodes());
+    public ScIterator(Map<NK, GraphNode<NK, NV, EK, EV>> nodes) {
+        this.nodesToDeal = new HashMap<>(nodes);
     }
 
     @Override

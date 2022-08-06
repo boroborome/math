@@ -134,7 +134,7 @@ public class DirectGraph<NK, NV, EK, EV> {
     }
 
     public ScIterator<NK, NV, EK, EV> scIterator() {
-        return new ScIterator<>(this);
+        return new ScIterator<>(nodes);
     }
 
     public Stream<ScNode<NK, NV, EK, EV>> scNodeStream() {
