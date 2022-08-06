@@ -75,7 +75,7 @@ class ScIteratorTest {
 
     @Test
     void should_enum_success_with_double_circle() {
-        DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M2", "M3->M4"});
+        DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M2", "M3->M4", "M2->M3"});
         List<List<String>> scNodes = callGraph.scNodeStream()
                 .map(n -> n.idStream().collect(Collectors.toList()))
                 .collect(Collectors.toList());

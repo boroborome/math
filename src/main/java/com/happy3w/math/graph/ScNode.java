@@ -11,4 +11,5 @@ import java.util.stream.Stream;
  */
 public interface ScNode<NK, NV, EK, EV> {
     Stream<NK> idStream();
+    Stream<GraphNode<NK, NV, EK, EV>> nodeStream();
 }

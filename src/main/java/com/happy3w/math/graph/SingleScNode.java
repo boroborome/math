@@ -14,7 +14,12 @@ public class SingleScNode<NK, NV, EK, EV> implements ScNode<NK, NV, EK, EV> {
 
     @Override
     public Stream<NK> idStream() {
-        return graphNode == null ? Stream.empty() : Stream.of(graphNode.getId());
+        return nodeStream().map(GraphNode::getId);
+    }
+
+    @Override
+    public Stream<GraphNode<NK, NV, EK, EV>> nodeStream() {
+        return graphNode == null ? Stream.empty() : Stream.of(graphNode);
     }
 
     public static <EV, NV, NK, EK> SingleScNode<NK, NV, EK, EV> from(GraphNode<NK, NV, EK, EV> graphNode) {
