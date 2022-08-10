@@ -6,11 +6,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Spliterators;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -145,12 +147,61 @@ public class DirectGraph<NK, NV, EK, EV> {
         return idsInPath;
     }
 
-    public ScIterator<NK, NV, EK, EV> scIterator() {
+    public Iterator<ScNode<NK, NV, EK, EV>> scIterator() {
         return new ScIterator<>(nodes);
     }
 
     public Stream<ScNode<NK, NV, EK, EV>> scNodeStream() {
         return StreamSupport.stream(Spliterators.spliterator(scIterator(), Long.MAX_VALUE, 0), false);
+    }
+
+    public Iterator<List<GraphNode<NK, NV, EK, EV>>> leafBatchIterator() {
+        return new LeafBatchIterator<>(nodes);
+    }
+
+    public Stream<List<GraphNode<NK, NV, EK, EV>>> leafBatchStream() {
+        return StreamSupport.stream(Spliterators.spliterator(leafBatchIterator(), Long.MAX_VALUE, 0), false);
+    }
+
+    public DirectGraph<Long, ScNode<NK, NV, EK, EV>, Long, Long> createScGraph() {
+        DirectGraph<Long, ScNode<NK, NV, EK, EV>, Long, Long> scGraph = new DirectGraph<>(nodeCount());
+
+        Map<NK, Long> nodeToScMap = fillScNodeIntoScGraph(scGraph);
+        fillScEdgeIntoScGraph(scGraph, nodeToScMap);
+
+        return scGraph;
+    }
+
+    private void fillScEdgeIntoScGraph(DirectGraph<Long, ScNode<NK, NV, EK, EV>, Long, Long> scGraph, Map<NK, Long> nodeToScMap) {
+        AtomicLong idHolder = new AtomicLong(0L);
+        nodeStream()
+                .flatMap(GraphNode::outcomeStream)
+                .map(edge -> new GraphEdge<>(idHolder.incrementAndGet(), nodeToScMap.get(edge.getFrom()), nodeToScMap.get(edge.getTo()), 0L))
+                .filter(edge -> !edge.getFrom().equals(edge.getTo()))
+                .forEach(edge -> {
+                    GraphNode<Long, ScNode<NK, NV, EK, EV>, Long, Long> from = scGraph.node(edge.getFrom());
+                    if (!from.outcomeStream().anyMatch(e -> e.getTo().equals(edge.getTo()))) {
+                        from.withOutcome(edge);
+                    }
+                });
+        scGraph.initIncomeWithOutcome();
+    }
+
+    private Map<NK, Long> fillScNodeIntoScGraph(DirectGraph<Long, ScNode<NK, NV, EK, EV>, Long, Long> scGraph) {
+        Map<NK, Long> nodeToScMap = new HashMap<>(nodeCount());
+        AtomicLong idHolder = new AtomicLong(0L);
+        Iterator<ScNode<NK, NV, EK, EV>> scIt = scIterator();
+        while (scIt.hasNext()) {
+            ScNode<NK, NV, EK, EV> scNode = scIt.next();
+            GraphNode<Long, ScNode<NK, NV, EK, EV>, Long, Long> newGraphNode =
+                    new GraphNode<Long, ScNode<NK, NV, EK, EV>, Long, Long>(idHolder.incrementAndGet())
+                            .withValue(scNode);
+            scGraph.acceptNode(newGraphNode);
+            for (GraphNode<NK, NV, EK, EV> node : scNode.nodeList()) {
+                nodeToScMap.put(node.getId(), newGraphNode.getId());
+            }
+        }
+        return nodeToScMap;
     }
 
     public boolean isEmpty() {

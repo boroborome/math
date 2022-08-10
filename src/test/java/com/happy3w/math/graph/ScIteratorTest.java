@@ -5,17 +5,17 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 class ScIteratorTest {
 
     @Test
     void should_enum_success_with_tree() {
-        DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4"});
-        List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.idStream().collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        DirectGraph<String, String, Long, Long> callGraph = GraphTestUtil.createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4"});
+
+        Stream<ScNode<String, String, Long, Long>> result = callGraph.scNodeStream();
+        List<List<String>> scNodes = formatResult(result);
 
         Assertions.assertEquals(
                 Arrays.asList(
@@ -27,12 +27,19 @@ class ScIteratorTest {
                 scNodes);
     }
 
-    @Test
-    void should_enum_success_with_single_call() {
-        DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2"});
-        List<List<String>> scNodes = callGraph.scNodeStream()
+    private List<List<String>> formatResult(Stream<ScNode<String, String, Long, Long>> result) {
+        List<List<String>> scNodes = result
                 .map(n -> n.idStream().collect(Collectors.toList()))
                 .collect(Collectors.toList());
+        return scNodes;
+    }
+
+    @Test
+    void should_enum_success_with_single_call() {
+        DirectGraph<String, String, Long, Long> callGraph = GraphTestUtil.createCallGraph(new String[]{"M1->M2"});
+
+        Stream<ScNode<String, String, Long, Long>> result = callGraph.scNodeStream();
+        List<List<String>> scNodes = formatResult(result);
 
         Assertions.assertEquals(
                 Arrays.asList(
@@ -44,10 +51,10 @@ class ScIteratorTest {
 
     @Test
     void should_enum_success_with_small_circle() {
-        DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M2"});
-        List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.idStream().collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        DirectGraph<String, String, Long, Long> callGraph = GraphTestUtil.createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M2"});
+
+        Stream<ScNode<String, String, Long, Long>> result = callGraph.scNodeStream();
+        List<List<String>> scNodes = formatResult(result);
 
         Assertions.assertEquals(
                 Arrays.asList(
@@ -60,10 +67,10 @@ class ScIteratorTest {
 
     @Test
     void should_enum_success_with_big_circle() {
-        DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M1"});
-        List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.idStream().collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        DirectGraph<String, String, Long, Long> callGraph = GraphTestUtil.createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M1"});
+
+        Stream<ScNode<String, String, Long, Long>> result = callGraph.scNodeStream();
+        List<List<String>> scNodes = formatResult(result);
 
         Assertions.assertEquals(
                 Arrays.asList(
@@ -75,10 +82,10 @@ class ScIteratorTest {
 
     @Test
     void should_enum_success_with_double_circle() {
-        DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M2", "M3->M4", "M2->M3"});
-        List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.idStream().collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        DirectGraph<String, String, Long, Long> callGraph = GraphTestUtil.createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4", "M4->M2", "M3->M4", "M2->M3"});
+
+        Stream<ScNode<String, String, Long, Long>> result = callGraph.scNodeStream();
+        List<List<String>> scNodes = formatResult(result);
 
         Assertions.assertEquals(
                 Arrays.asList(
@@ -90,10 +97,10 @@ class ScIteratorTest {
 
     @Test
     void should_enum_success_with_self_circle() {
-        DirectGraph<String, String, Long, Long> callGraph = createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M2"});
-        List<List<String>> scNodes = callGraph.scNodeStream()
-                .map(n -> n.idStream().collect(Collectors.toList()))
-                .collect(Collectors.toList());
+        DirectGraph<String, String, Long, Long> callGraph = GraphTestUtil.createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M2"});
+
+        Stream<ScNode<String, String, Long, Long>> result = callGraph.scNodeStream();
+        List<List<String>> scNodes = formatResult(result);
 
         Assertions.assertEquals(
                 Arrays.asList(
@@ -104,17 +111,4 @@ class ScIteratorTest {
                 scNodes);
     }
 
-    private DirectGraph<String, String, Long, Long> createCallGraph(String[] callExps) {
-        AtomicLong idHolder = new AtomicLong(0L);
-        DirectGraph<String, String, Long, Long> callGraph = new DirectGraph<>();
-        for (String exp : callExps) {
-            String[] methods = exp.split("->");
-
-            GraphNode<String, String, Long, Long> fromNode = callGraph.takeNode(methods[0]);
-            GraphNode<String, String, Long, Long> toNode = callGraph.takeNode(methods[1]);
-            callGraph.acceptEdge(new GraphEdge<>(idHolder.incrementAndGet(), fromNode.getId(), toNode.getId(), 0L));
-        }
-
-        return callGraph;
-    }
 }
