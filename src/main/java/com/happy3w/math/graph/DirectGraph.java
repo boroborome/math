@@ -69,6 +69,10 @@ public class DirectGraph<NK, NV, EK, EV> {
         }
     }
 
+    public void acceptNode(GraphNode<NK, NV, EK, EV> newNode) {
+        nodes.put(newNode.getId(), newNode);
+    }
+
     public int nodeCount() {
         return nodes.size();
     }
