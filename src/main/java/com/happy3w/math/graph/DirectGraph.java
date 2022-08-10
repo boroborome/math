@@ -19,7 +19,15 @@ import java.util.stream.StreamSupport;
 
 @Getter
 public class DirectGraph<NK, NV, EK, EV> {
-    private Map<NK, GraphNode<NK, NV, EK, EV>> nodes = new HashMap<>();
+    private Map<NK, GraphNode<NK, NV, EK, EV>> nodes;
+
+    public DirectGraph() {
+        nodes = new HashMap<>();
+    }
+
+    public DirectGraph(int initialCapacity) {
+        nodes = new HashMap<>(initialCapacity);
+    }
 
     public GraphNode<NK, NV, EK, EV> takeNode(NK id, NV value) {
         return takeNode(id, () -> value);
