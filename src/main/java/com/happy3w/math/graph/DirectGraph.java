@@ -1,5 +1,6 @@
 package com.happy3w.math.graph;
 
+import com.happy3w.java.ext.stream.ParallelSpliterator;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Spliterators;
+import java.util.Spliterator;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
@@ -152,7 +153,7 @@ public class DirectGraph<NK, NV, EK, EV> {
     }
 
     public Stream<ScNode<NK, NV, EK, EV>> scNodeStream() {
-        return StreamSupport.stream(Spliterators.spliterator(scIterator(), Long.MAX_VALUE, 0), false);
+        return StreamSupport.stream(new ParallelSpliterator<>(scIterator(), Spliterator.ORDERED), false);
     }
 
     public Iterator<List<GraphNode<NK, NV, EK, EV>>> leafBatchIterator() {
@@ -160,7 +161,7 @@ public class DirectGraph<NK, NV, EK, EV> {
     }
 
     public Stream<List<GraphNode<NK, NV, EK, EV>>> leafBatchStream() {
-        return StreamSupport.stream(Spliterators.spliterator(leafBatchIterator(), Long.MAX_VALUE, 0), false);
+        return StreamSupport.stream(new ParallelSpliterator<>(leafBatchIterator(), Spliterator.ORDERED), false);
     }
 
     public DirectGraph<Long, ScNode<NK, NV, EK, EV>, Long, Long> createScGraph() {
