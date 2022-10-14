@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -76,6 +77,7 @@ public class GraphTool {
             graphNode.outcomeStream()
                     .sorted(Comparator.comparing(GraphEdge::getValue, (Comparator<EV>) Comparator.naturalOrder()))
                     .map(edge -> graph.node(edge.getTo()))
+                    .filter(Objects::nonNull)
                     .forEach(node -> queue.add(new GraphTreeNodeHolder<>(node, treeNode -> curTreeNode.addSubNode(treeNode))));
         }
         return treeHolder.get();
