@@ -1,6 +1,6 @@
 
 group = 'com.happy3w'
-version =  '1.0.5'
+version =  '1.0.6'
 
 ext {
 	artifactId = "math"
@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-	api('com.happy3w:java-ext:1.0.2')
+	api('com.happy3w:java-ext:1.0.3')
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 
 	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
