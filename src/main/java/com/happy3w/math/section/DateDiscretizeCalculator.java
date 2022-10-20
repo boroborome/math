@@ -6,16 +6,21 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public class DateDiscretizeCalculator implements DiscretizeCalculator<Date> {
+    private final ZoneId zoneId;
+
+    public DateDiscretizeCalculator(ZoneId zoneId) {
+        this.zoneId = zoneId;
+    }
+
     @Override
     public Date plus(Date value, long delta) {
         if (value == null) {
             return null;
         }
 
-        Instant newInstant = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault())
-                .toLocalDate()
+        Instant newInstant = LocalDateTime.ofInstant(value.toInstant(), zoneId)
                 .plusDays(delta)
-                .atStartOfDay(ZoneId.systemDefault())
+                .atZone(zoneId)
                 .toInstant();
         return Date.from(newInstant);
     }
