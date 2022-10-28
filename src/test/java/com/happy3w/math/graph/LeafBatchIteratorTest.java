@@ -26,4 +26,22 @@ class LeafBatchIteratorTest {
                 ),
                 batchList);
     }
+
+    @Test
+    void should_reverse_enum_success_with_tree() {
+        DirectGraph<String, String, Long, Long> callGraph = GraphTestUtil.createCallGraph(new String[]{"M1->M2", "M1->M3", "M2->M4"});
+        List<List<String>> batchList = callGraph.leafBatchReverseStream()
+                .map(batch -> batch.stream()
+                        .map(node -> node.getId())
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
+
+        Assertions.assertEquals(
+                Arrays.asList(
+                        Arrays.asList("M1"),
+                        Arrays.asList("M2", "M3"),
+                        Arrays.asList("M4")
+                ),
+                batchList);
+    }
 }

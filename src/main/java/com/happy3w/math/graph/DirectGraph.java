@@ -157,11 +157,19 @@ public class DirectGraph<NK, NV, EK, EV> {
     }
 
     public Iterator<List<GraphNode<NK, NV, EK, EV>>> leafBatchIterator() {
-        return new LeafBatchIterator<>(nodes);
+        return new LeafBatchIterator<>(nodes, node -> node.outcomeStream().map(GraphEdge::getTo));
+    }
+
+    public Iterator<List<GraphNode<NK, NV, EK, EV>>> leafBatchReverseIterator() {
+        return new LeafBatchIterator<>(nodes, node -> node.incomeStream().map(GraphEdge::getFrom));
     }
 
     public Stream<List<GraphNode<NK, NV, EK, EV>>> leafBatchStream() {
         return StreamSupport.stream(new ParallelSpliterator<>(leafBatchIterator(), Spliterator.ORDERED), false);
+    }
+
+    public Stream<List<GraphNode<NK, NV, EK, EV>>> leafBatchReverseStream() {
+        return StreamSupport.stream(new ParallelSpliterator<>(leafBatchReverseIterator(), Spliterator.ORDERED), false);
     }
 
     public DirectGraph<Long, ScNode<NK, NV, EK, EV>, Long, Long> createScGraph() {

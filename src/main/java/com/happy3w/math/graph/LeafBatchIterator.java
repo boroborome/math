@@ -6,13 +6,21 @@ import com.happy3w.java.ext.NullableOptional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LeafBatchIterator<NK, NV, EK, EV> extends NeedFindIterator<List<GraphNode<NK, NV, EK, EV>>> {
+    private final Function<GraphNode<NK, NV, EK, EV>, Stream<NK>> subNodeDetector;
     private final Map<NK, GraphNode<NK, NV, EK, EV>> nodesToEnum;
 
     public LeafBatchIterator(Map<NK, GraphNode<NK, NV, EK, EV>> nodesToEnum) {
+        this(nodesToEnum, node -> node.outcomeStream().map(GraphEdge::getTo));
+    }
+
+    public LeafBatchIterator(Map<NK, GraphNode<NK, NV, EK, EV>> nodesToEnum, Function<GraphNode<NK, NV, EK, EV>, Stream<NK>> subNodeDetector) {
         this.nodesToEnum = new HashMap<>(nodesToEnum);
+        this.subNodeDetector = subNodeDetector;
     }
 
     @Override
@@ -23,8 +31,8 @@ public class LeafBatchIterator<NK, NV, EK, EV> extends NeedFindIterator<List<Gra
 
         List<GraphNode<NK, NV, EK, EV>> leafBatch = nodesToEnum.values()
                 .stream()
-                .filter(node -> !node.outcomeStream()
-                        .anyMatch(edge -> nodesToEnum.get(edge.getTo()) != null)
+                .filter(node -> !subNodeDetector.apply(node)
+                        .anyMatch(subNode -> nodesToEnum.get(subNode) != null)
                 ).collect(Collectors.toList());
 
         if (leafBatch.isEmpty()) {
