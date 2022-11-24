@@ -236,7 +236,7 @@ public class DirectGraph<NK, NV, EK, EV> {
 
     /**
      * distribute something to other node by income edges
-     * @param distributeLogic (source,target)->target is changed or not
+     * @param distributeLogic (source,target)-&gt;target is changed or not
      */
     public void distributeByIncome(BiFunction<NV, NV, Boolean> distributeLogic) {
         Set<NK> changedNodes = new HashSet<>(nodes.keySet());
