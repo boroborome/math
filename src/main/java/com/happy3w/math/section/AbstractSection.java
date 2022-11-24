@@ -148,7 +148,7 @@ public abstract class AbstractSection<T, S extends AbstractSection<T, S>> {
 
     /**
      *
-     * @param newItem
+     * @param newItem item to be union
      * @return return where from is set in
      */
     protected int unionFromItem(SectionItem<T> newItem) {
