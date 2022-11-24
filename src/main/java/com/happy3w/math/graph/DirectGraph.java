@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -231,5 +232,33 @@ public class DirectGraph<NK, NV, EK, EV> {
 
     public boolean isEmpty() {
         return nodes.isEmpty();
+    }
+
+    /**
+     * distribute something to other node by income edges
+     * @param distributeLogic (source,target)->target is changed or not
+     */
+    public void distributeByIncome(BiFunction<NV, NV, Boolean> distributeLogic) {
+        Set<NK> changedNodes = new HashSet<>(nodes.keySet());
+        while (!changedNodes.isEmpty()) {
+            changedNodes = distributeInfoToParent(changedNodes, nodes, distributeLogic);
+        }
+    }
+
+    private Set<NK> distributeInfoToParent(Set<NK> nodeIds,
+                                           Map<NK, GraphNode<NK, NV, EK, EV>> nodeMap,
+                                           BiFunction<NV, NV, Boolean> distributeLogic) {
+        Set<NK> changedNodes = new HashSet<>();
+        for (NK nodeId : nodeIds) {
+            GraphNode<NK, NV, EK, EV> node = nodeMap.get(nodeId);
+            node.incomeStream()
+                    .forEach(income -> {
+                        GraphNode<NK, NV, EK, EV> from = nodeMap.get(income.getFrom());
+                        if (distributeLogic.apply(node.getValue(), from.getValue())) {
+                            changedNodes.add(from.getId());
+                        }
+                    });
+        }
+        return changedNodes;
     }
 }
