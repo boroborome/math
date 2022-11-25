@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -260,5 +261,41 @@ public class DirectGraph<NK, NV, EK, EV> {
                     });
         }
         return changedNodes;
+    }
+
+    public void removeEdge(GraphEdge<EK, EV, NK> edge) {
+        nodes.get(edge.getFrom())
+                .getOutcomes().remove(edge.getId());
+        GraphNode<NK, NV, EK, EV> to = nodes.get(edge.getTo());
+        Map<EK, GraphEdge<EK, EV, NK>> incomes = to.getIncomes();
+        if (incomes != null) {
+            incomes.remove(edge.getId());
+        }
+    }
+
+    /**
+     * merge subNode into mainNode
+     * @param mainNode node that will be hold in graph
+     * @param subNode node that will be removed from graph
+     */
+    public void mergeNode(GraphNode<NK, NV, EK, EV> mainNode, GraphNode<NK, NV, EK, EV> subNode) {
+        NK mainId = mainNode.getId();
+        Collection<GraphEdge<EK, EV, NK>> outcomes = subNode.getOutcomes() == null ? Collections.emptyList() : subNode.getOutcomes().values();
+        for (GraphEdge<EK, EV, NK> edge : new ArrayList<>(outcomes)) {
+            removeEdge(edge);
+
+            GraphEdge<EK, EV, NK> newEdge = new GraphEdge<>(edge.getId(), mainId, edge.getTo(), edge.getValue());
+            acceptEdge(newEdge);
+        }
+
+        Collection<GraphEdge<EK, EV, NK>> incomes = subNode.getIncomes() == null ? Collections.emptyList() : subNode.getIncomes().values();
+        for (GraphEdge<EK, EV, NK> edge : new ArrayList<>(incomes)) {
+            removeEdge(edge);
+
+            GraphEdge<EK, EV, NK> newEdge = new GraphEdge<>(edge.getId(), edge.getFrom(), mainId, edge.getValue());
+            acceptEdge(newEdge);
+        }
+
+        nodes.remove(subNode.getId());
     }
 }
