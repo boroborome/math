@@ -298,4 +298,14 @@ public class DirectGraph<NK, NV, EK, EV> {
 
         nodes.remove(subNode.getId());
     }
+
+    public DirectGraph<NK, NV, EK, EV> cloneGraph() {
+        DirectGraph<NK, NV, EK, EV> graph = new DirectGraph<>();
+        for (GraphNode<NK, NV, EK, EV> node : nodes.values()) {
+            GraphNode<NK, NV, EK, EV> newNode = node.cloneNode();
+            graph.nodes.put(newNode.getId(), newNode);
+        }
+
+        return graph;
+    }
 }

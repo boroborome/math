@@ -68,4 +68,26 @@ public class GraphNode<NK, NV, EK, EV> {
         }
         incomes.remove(income.getId());
     }
+
+    public GraphNode<NK, NV, EK, EV> cloneNode() {
+        GraphNode<NK, NV, EK, EV> newNode = new GraphNode<>(id);
+        newNode.incomes = cloneEdges(incomes);
+        newNode.outcomes = cloneEdges(outcomes);
+        newNode.value = value;
+        return newNode;
+    }
+
+    private Map<EK, GraphEdge<EK, EV, NK>> cloneEdges(Map<EK, GraphEdge<EK, EV, NK>> edges) {
+        if (edges == null) {
+            return null;
+        }
+
+        Map<EK, GraphEdge<EK, EV, NK>> newEdges = new HashMap<>();
+        for (GraphEdge<EK, EV, NK> edge : edges.values()) {
+            GraphEdge<EK, EV, NK> newEdge = edge.cloneEdge();
+            newEdges.put(newEdge.getId(), newEdge);
+        }
+
+        return newEdges;
+    }
 }

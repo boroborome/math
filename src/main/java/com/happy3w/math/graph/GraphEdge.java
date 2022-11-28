@@ -13,4 +13,8 @@ public class GraphEdge<EK, EV, NK> {
     private NK to;
 
     private EV value;
+
+    public GraphEdge<EK, EV, NK> cloneEdge() {
+        return new GraphEdge<>(id, from, to, value);
+    }
 }
