@@ -308,4 +308,37 @@ public class DirectGraph<NK, NV, EK, EV> {
 
         return graph;
     }
+
+    public void handoverNodes(Predicate<GraphNode<NK, NV, EK, EV>> nodeChecker,
+                              Supplier<EK> edgeIdGenerator,
+                              BiFunction<EV, EV, EV> edgeValueGenerator) {
+        for (GraphNode<NK, NV, EK, EV> node : new ArrayList<>(nodes.values())) {
+            if (nodeChecker.test(node)) {
+                node.incomeStream()
+                        .flatMap(inEdge -> node.outcomeStream()
+                                .map(outEdge -> new GraphEdge<>(edgeIdGenerator.get(),
+                                        inEdge.getFrom(),
+                                        outEdge.getTo(),
+                                        edgeValueGenerator.apply(inEdge.getValue(), outEdge.getValue()))))
+                        .forEach(this::acceptEdge);
+                removeNode(node);
+            }
+        }
+    }
+
+    public void removeNode(GraphNode<NK, NV, EK, EV> node) {
+        removeEdges(node.getIncomes());
+        removeEdges(node.getOutcomes());
+        nodes.remove(node.getId());
+    }
+
+    private void removeEdges(Map<EK, GraphEdge<EK, EV, NK>> edges) {
+        if (edges == null) {
+            return;
+        }
+
+        for (GraphEdge<EK, EV, NK> edge : new ArrayList<>(edges.values())) {
+            removeEdge(edge);
+        }
+    }
 }
