@@ -71,12 +71,12 @@ public class GraphTool {
      * @param graph graph to convert
      * @param startNodeId the start tree node
      * @param treeNodeGenerator generator to create tree node, the boolean param is repeated.
-     * @return tree created from graph
      * @param <NK> graph node key type
      * @param <NV> graph node value type
      * @param <EK> graph edge key type
      * @param <EV> graph edge value type
      * @param <TT> tree data type
+     * @return tree created from graph
      */
     public static <NK, NV, EK, EV, TT> SimpleTreeNode<TT> graphToTree(DirectGraph<NK, NV, EK, EV> graph,
                                                                       NK startNodeId,
