@@ -332,6 +332,14 @@ public class DirectGraph<NK, NV, EK, EV> {
         nodes.remove(node.getId());
     }
 
+    public void removeNodes(Predicate<GraphNode<NK, NV, EK, EV>> checker) {
+        for (GraphNode<NK, NV, EK, EV> node : new ArrayList<>(nodes.values())) {
+            if (checker.test(node)) {
+                removeNode(node);
+            }
+        }
+    }
+
     private void removeEdges(Map<EK, GraphEdge<EK, EV, NK>> edges) {
         if (edges == null) {
             return;
