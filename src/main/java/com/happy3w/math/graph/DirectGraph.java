@@ -314,8 +314,11 @@ public class DirectGraph<NK, NV, EK, EV> {
                               BiFunction<EV, EV, EV> edgeValueGenerator) {
         for (GraphNode<NK, NV, EK, EV> node : new ArrayList<>(nodes.values())) {
             if (nodeChecker.test(node)) {
+                NK curNodeId = node.getId();
                 node.incomeStream()
+                        .filter(inEdge -> !curNodeId.equals(inEdge.getFrom()))
                         .flatMap(inEdge -> node.outcomeStream()
+                                .filter(outEdge -> !curNodeId.equals(outEdge.getTo()))
                                 .map(outEdge -> new GraphEdge<>(edgeIdGenerator.get(),
                                         inEdge.getFrom(),
                                         outEdge.getTo(),
