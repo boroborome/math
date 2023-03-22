@@ -178,4 +178,15 @@ public class NumRange {
         return -1;
     }
 
+    public Long size() {
+        long size = 0;
+        for (NumRangeItem item : items) {
+            if (item.getEnd() == null || item.getStart() == null) {
+                return null;
+            }
+            size += (item.getEnd() - item.getStart() + 1);
+        }
+        return size;
+    }
+
 }

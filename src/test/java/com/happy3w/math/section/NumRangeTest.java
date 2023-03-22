@@ -8,6 +8,24 @@ import java.util.stream.Collectors;
 
 class NumRangeTest {
 
+    @Test
+    void should_calculate_size_success() {
+        Assertions.assertEquals(0, new NumRange().size());
+
+        Assertions.assertEquals(1, new NumRange(Arrays.asList(
+                new NumRangeItem(1, 1))
+        ).size());
+
+        Assertions.assertEquals(null, new NumRange(Arrays.asList(
+                new NumRangeItem(1L, null))
+        ).size());
+
+        Assertions.assertEquals(7, new NumRange(Arrays.asList(
+                new NumRangeItem(1, 3),
+                new NumRangeItem(6, 9)
+                )
+        ).size());
+    }
 
     @Test
     void should_subtract_success() {
