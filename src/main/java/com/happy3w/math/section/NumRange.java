@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @NoArgsConstructor
-public class NumDiscreteSection {
-    private List<NumDiscreteSectionItem> items = new ArrayList<>();
+public class NumRange {
+    private List<NumRangeItem> items = new ArrayList<>();
 
-    public NumDiscreteSection(List<NumDiscreteSectionItem> items) {
+    public NumRange(List<NumRangeItem> items) {
         unionItems(items);
     }
 
-    private void installEnd(Long end, int startIndex, List<NumDiscreteSectionItem> items) {
+    private void installEnd(Long end, int startIndex, List<NumRangeItem> items) {
         for (int index = startIndex; index < items.size(); ) {
-            NumDiscreteSectionItem item = items.get(index);
+            NumRangeItem item = items.get(index);
             Long itemEnd = item.getEnd();
             long endGap = gap(end, itemEnd, false);
             if (endGap <= 0) {
@@ -28,7 +28,7 @@ public class NumDiscreteSection {
             if (nextIndex >= items.size()) {
                 return;
             }
-            NumDiscreteSectionItem nextItem = items.get(nextIndex);
+            NumRangeItem nextItem = items.get(nextIndex);
             Long itemStart = nextItem.getStart();
             long startGap = gap(end, itemStart, false);
             if (startGap < -1) {
@@ -56,13 +56,13 @@ public class NumDiscreteSection {
         return a - b;
     }
 
-    private int installStart(Long start, Long end, List<NumDiscreteSectionItem> items) {
+    private int installStart(Long start, Long end, List<NumRangeItem> items) {
         for (int index = 0; index < items.size(); index++) {
-            NumDiscreteSectionItem item = items.get(index);
+            NumRangeItem item = items.get(index);
             Long itemStart = item.getStart();
             long startGap = gap(start, itemStart, true);
             if (startGap < -1) {
-                NumDiscreteSectionItem newItem = new NumDiscreteSectionItem(start, start);
+                NumRangeItem newItem = new NumRangeItem(start, start);
                 items.add(index, newItem);
                 return index;
             } else if (startGap < 1) {
@@ -81,38 +81,38 @@ public class NumDiscreteSection {
             }
         }
 
-        NumDiscreteSectionItem newItem = new NumDiscreteSectionItem(start, end);
+        NumRangeItem newItem = new NumRangeItem(start, end);
         items.add(newItem);
         return items.size() - 1;
     }
 
-    public Stream<NumDiscreteSectionItem> items() {
+    public Stream<NumRangeItem> items() {
         return items.stream();
     }
 
-    public NumDiscreteSection unionSection(NumDiscreteSection otherSection) {
+    public NumRange unionRange(NumRange otherSection) {
         return unionItems(otherSection.items);
     }
 
-    public NumDiscreteSection unionItems(List<NumDiscreteSectionItem> newItems) {
+    public NumRange unionItems(List<NumRangeItem> newItems) {
         if (newItems != null) {
-            for (NumDiscreteSectionItem item : newItems) {
+            for (NumRangeItem item : newItems) {
                 unionItem(item);
             }
         }
         return this;
     }
 
-    public NumDiscreteSection unionItem(NumDiscreteSectionItem item) {
+    public NumRange unionItem(NumRangeItem item) {
         int index = installStart(item.getStart(), item.getEnd(), items);
         installEnd(item.getEnd(), index, items);
         return this;
     }
 
-    public NumDiscreteSection unionValue(Long value) {
+    public NumRange unionValue(Long value) {
         if (value == null) {
             throw new IllegalArgumentException("value added into section should not be null for confused meaning.");
         }
-        return unionItem(new NumDiscreteSectionItem(value, value));
+        return unionItem(new NumRangeItem(value, value));
     }
 }

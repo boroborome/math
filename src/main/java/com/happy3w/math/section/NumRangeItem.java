@@ -9,11 +9,11 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
-public class NumDiscreteSectionItem {
+public class NumRangeItem {
     private Long start;
     private Long end;
 
-    public NumDiscreteSectionItem(int start, int end) {
+    public NumRangeItem(int start, int end) {
         this.start = Long.valueOf(start);
         this.end = Long.valueOf(end);
     }
