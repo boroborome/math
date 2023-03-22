@@ -9,6 +9,29 @@ import java.util.stream.Collectors;
 class NumRangeTest {
 
     @Test
+    void should_to_string_success() {
+        Assertions.assertEquals("",
+                new NumRange().toString());
+
+        Assertions.assertEquals("[1,1]",
+                new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 1)
+                )).toString());
+
+        Assertions.assertEquals("[1,1];[5,8]",
+                new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 1),
+                        new NumRangeItem(5, 8)
+                )).toString());
+
+        Assertions.assertEquals("(*,1];[5,*)",
+                new NumRange(Arrays.asList(
+                        new NumRangeItem(null, 1L),
+                        new NumRangeItem(5L, null)
+                )).toString());
+    }
+
+    @Test
     void should_calculate_size_success() {
         Assertions.assertEquals(0, new NumRange().size());
 

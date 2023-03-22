@@ -18,14 +18,25 @@ public class NumRangeItem {
         this.end = Long.valueOf(end);
     }
 
+    public void output(StringBuilder buf) {
+        if (start == null) {
+            buf.append("(*");
+        } else {
+            buf.append('[')
+                    .append(start);
+        }
+        buf.append(',');
+        if (end == null) {
+            buf.append("*)");
+        } else {
+            buf.append(end)
+                    .append(']');
+        }
+    }
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append('[')
-                .append(start == null ? "*" : start)
-                .append(',')
-                .append(end == null ? "*" : end)
-                .append(']')
-                .toString();
+        StringBuilder buf = new StringBuilder();
+        output(buf);
+        return buf.toString();
     }
 }

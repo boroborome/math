@@ -189,4 +189,15 @@ public class NumRange {
         return size;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        for (NumRangeItem item : items) {
+            if (buf .length() > 0) {
+                buf.append(';');
+            }
+            item.output(buf);
+        }
+        return buf.toString();
+    }
 }
