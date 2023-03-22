@@ -115,4 +115,67 @@ public class NumRange {
         }
         return unionItem(new NumRangeItem(value, value));
     }
+
+    public NumRange subtractRange(NumRange otherSection) {
+        return subtractItems(otherSection.items);
+    }
+
+    public NumRange subtractItems(List<NumRangeItem> newItems) {
+        if (newItems != null) {
+            for (NumRangeItem item : newItems) {
+                subtractItem(item);
+            }
+        }
+        return this;
+    }
+
+    public NumRange subtractItem(NumRangeItem item) {
+        int index = subtractStart(item.getStart(), items);
+        if (index >= 0) {
+            subtractEnd(item.getEnd(), index, items);
+        }
+
+        return this;
+    }
+
+    private void subtractEnd(Long end, int startIndex, List<NumRangeItem> items) {
+        for (int index = startIndex; index < items.size(); ) {
+            NumRangeItem item = items.get(index);
+            Long itemStart = item.getStart();
+            long gapStart = gap(end, itemStart, false);
+            if (gapStart < 0) {
+                return;
+            }
+            item.setStart(end + 1);
+
+            Long itemEnd = item.getEnd();
+            long gapEnd = gap(end, itemEnd, false);
+            if (gapEnd < 0) {
+                return;
+            }
+            items.remove(index);
+        }
+    }
+
+    private int subtractStart(Long start, List<NumRangeItem> items) {
+        for (int index = 0; index < items.size(); index++) {
+            NumRangeItem item = items.get(index);
+            Long itemStart = item.getStart();
+            long gapStart = gap(start, itemStart, true);
+            if (gapStart <= 0) {
+                return index;
+            }
+
+            Long itemEnd = item.getEnd();
+            long gapEnd = gap(start, itemEnd, false);
+            if (gapEnd <= 0) {
+                int nextIndex = index + 1;
+                items.add(nextIndex, new NumRangeItem(start + 1, item.getEnd()));
+                item.setEnd(start - 1);
+                return nextIndex;
+            }
+        }
+        return -1;
+    }
+
 }

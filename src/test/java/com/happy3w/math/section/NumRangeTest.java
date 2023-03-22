@@ -8,6 +8,59 @@ import java.util.stream.Collectors;
 
 class NumRangeTest {
 
+
+    @Test
+    void should_subtract_success() {
+        Assertions.assertEquals(
+                Arrays.asList(new NumRangeItem(1, 3),
+                        new NumRangeItem(7, 7)),
+                new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 3),
+                        new NumRangeItem(5, 7)
+                )).subtractItem(new NumRangeItem(4, 6))
+                        .items().collect(Collectors.toList())
+        );
+
+        Assertions.assertEquals(
+                Arrays.asList(new NumRangeItem(null, 4L),
+                        new NumRangeItem(8L, null)),
+                new NumRange(Arrays.asList(
+                        new NumRangeItem(null, null)
+                )).subtractItem(new NumRangeItem(5, 7))
+                        .items().collect(Collectors.toList())
+        );
+
+        Assertions.assertEquals(
+                Arrays.asList(new NumRangeItem(1, 4),
+                        new NumRangeItem(8, 10)),
+                new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 10)
+                )).subtractItem(new NumRangeItem(5, 7))
+                        .items().collect(Collectors.toList())
+        );
+
+        Assertions.assertEquals(
+                Arrays.asList(new NumRangeItem(1, 4),
+                        new NumRangeItem(8, 10)),
+                new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 5),
+                        new NumRangeItem(7, 10)
+                )).subtractItem(new NumRangeItem(5, 7))
+                        .items().collect(Collectors.toList())
+        );
+
+        Assertions.assertEquals(
+                Arrays.asList(new NumRangeItem(1, 1),
+                        new NumRangeItem(12, 15)),
+                new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 3),
+                        new NumRangeItem(5, 7),
+                        new NumRangeItem(10, 15)
+                )).subtractItem(new NumRangeItem(2, 11))
+                        .items().collect(Collectors.toList())
+        );
+    }
+    
     @Test
     void should_instance_success() {
         Assertions.assertEquals(
