@@ -1,11 +1,14 @@
 package com.happy3w.math.section;
 
+import com.happy3w.java.ext.StringUtils;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+@EqualsAndHashCode
 @NoArgsConstructor
 public class NumRange {
     private List<NumRangeItem> items = new ArrayList<>();
@@ -56,14 +59,28 @@ public class NumRange {
         return a - b;
     }
 
+    private Long min(Long a, Long b) {
+        if (a == null) {
+            return b;
+        } else if (b == null) {
+            return a;
+        }
+
+        return a > b ? b : a;
+    }
+
     private int installStart(Long start, Long end, List<NumRangeItem> items) {
         for (int index = 0; index < items.size(); index++) {
             NumRangeItem item = items.get(index);
             Long itemStart = item.getStart();
             long startGap = gap(start, itemStart, true);
             if (startGap < -1) {
-                NumRangeItem newItem = new NumRangeItem(start, start);
-                items.add(index, newItem);
+                if (gap(end, startGap, false) >= 0) {
+                    item.setStart(start);
+                } else {
+                    NumRangeItem newItem = new NumRangeItem(start, end);
+                    items.add(index, newItem);
+                }
                 return index;
             } else if (startGap < 1) {
                 item.setStart(start);
@@ -199,5 +216,19 @@ public class NumRange {
             item.output(buf);
         }
         return buf.toString();
+    }
+
+    public static NumRange parse(String text) {
+        NumRange range = new NumRange();
+        if (StringUtils.isEmpty(text)) {
+            return range;
+        }
+
+        for (String textItem : text.split(";")) {
+            NumRangeItem item = NumRangeItem.parse(textItem.trim());
+            range.unionItem(item);
+        }
+
+        return range;
     }
 }

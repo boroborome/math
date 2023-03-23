@@ -1,5 +1,6 @@
 package com.happy3w.math.section;
 
+import com.happy3w.java.ext.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,10 +34,30 @@ public class NumRangeItem {
                     .append(']');
         }
     }
+
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
         output(buf);
         return buf.toString();
+    }
+
+    public static NumRangeItem parse(String text) {
+        if (StringUtils.isEmpty(text)) {
+            return null;
+        }
+
+        String[] nums = text.replace("[", "")
+                .replace("]", "")
+                .replace("(", "")
+                .replace(")", "")
+                .split(",");
+        Long start = parseNum(nums[0].trim());
+        Long end = parseNum(nums.length < 2 ? "" : nums[1].trim());
+        return new NumRangeItem(start, end);
+    }
+
+    private static Long parseNum(String text) {
+        return "*".equals(text) || text.isEmpty() ? null : Long.parseLong(text);
     }
 }

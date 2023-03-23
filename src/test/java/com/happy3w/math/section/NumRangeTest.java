@@ -9,6 +9,39 @@ import java.util.stream.Collectors;
 class NumRangeTest {
 
     @Test
+    void should_parse_from_string_success() {
+        Assertions.assertEquals(new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 1)
+                )), NumRange.parse("[1,1]"));
+
+        Assertions.assertEquals(new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 1),
+                        new NumRangeItem(5, 7)
+                )), NumRange.parse("[1,1];[5,7]"));
+
+        Assertions.assertEquals(new NumRange(Arrays.asList(
+                        new NumRangeItem(1, 1),
+                        new NumRangeItem(5, 7)
+                )), NumRange.parse("[1,1];[5,7]"));
+
+        Assertions.assertEquals(new NumRange(Arrays.asList(
+                        new NumRangeItem(1L, null)
+                )), NumRange.parse("[1,*];[5,7]"));
+
+        Assertions.assertEquals(new NumRange(Arrays.asList(
+                new NumRangeItem(null, null)
+        )), NumRange.parse("[1,*];[*,7]"));
+
+        Assertions.assertEquals(new NumRange(Arrays.asList(
+                new NumRangeItem(null, 4L)
+        )), NumRange.parse("[1,2];[*,4]"));
+
+        Assertions.assertEquals(new NumRange(Arrays.asList(
+                new NumRangeItem(null, 4L)
+        )), NumRange.parse("[*,4];[1,2]"));
+    }
+
+    @Test
     void should_to_string_success() {
         Assertions.assertEquals("",
                 new NumRange().toString());
@@ -46,7 +79,7 @@ class NumRangeTest {
         Assertions.assertEquals(7, new NumRange(Arrays.asList(
                 new NumRangeItem(1, 3),
                 new NumRangeItem(6, 9)
-                )
+        )
         ).size());
     }
 
@@ -101,7 +134,7 @@ class NumRangeTest {
                         .items().collect(Collectors.toList())
         );
     }
-    
+
     @Test
     void should_instance_success() {
         Assertions.assertEquals(
