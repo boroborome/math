@@ -19,6 +19,22 @@ public class NumRangeItem {
         this.end = Long.valueOf(end);
     }
 
+    public static long gap(Long a, Long b, boolean nullIsMin) {
+        if (a == b) {
+            return 0;
+        }
+
+        if (a == null) {
+            return nullIsMin ? -10 : 10;
+        }
+
+        if (b == null) {
+            return nullIsMin ? 10 : -10;
+        }
+
+        return a - b;
+    }
+
     public void output(StringBuilder buf) {
         if (start == null) {
             buf.append("(*");
@@ -59,5 +75,11 @@ public class NumRangeItem {
 
     private static Long parseNum(String text) {
         return "*".equals(text) || text.isEmpty() ? null : Long.parseLong(text);
+    }
+
+    public boolean isValid() {
+        return start == null
+                || end == null
+                || start <= end;
     }
 }

@@ -21,7 +21,7 @@ public class NumRange {
         for (int index = startIndex; index < items.size(); ) {
             NumRangeItem item = items.get(index);
             Long itemEnd = item.getEnd();
-            long endGap = gap(end, itemEnd, false);
+            long endGap = NumRangeItem.gap(end, itemEnd, false);
             if (endGap <= 0) {
                 return;
             }
@@ -33,7 +33,7 @@ public class NumRange {
             }
             NumRangeItem nextItem = items.get(nextIndex);
             Long itemStart = nextItem.getStart();
-            long startGap = gap(end, itemStart, false);
+            long startGap = NumRangeItem.gap(end, itemStart, false);
             if (startGap < -1) {
                 return;
             } else {
@@ -43,39 +43,13 @@ public class NumRange {
         }
     }
 
-    private long gap(Long a, Long b, boolean nullIsMin) {
-        if (a == b) {
-            return 0;
-        }
-
-        if (a == null) {
-            return nullIsMin ? -10 : 10;
-        }
-
-        if (b == null) {
-            return nullIsMin ? 10 : -10;
-        }
-
-        return a - b;
-    }
-
-    private Long min(Long a, Long b) {
-        if (a == null) {
-            return b;
-        } else if (b == null) {
-            return a;
-        }
-
-        return a > b ? b : a;
-    }
-
     private int installStart(Long start, Long end, List<NumRangeItem> items) {
         for (int index = 0; index < items.size(); index++) {
             NumRangeItem item = items.get(index);
             Long itemStart = item.getStart();
-            long startGap = gap(start, itemStart, true);
+            long startGap = NumRangeItem.gap(start, itemStart, true);
             if (startGap < -1) {
-                if (gap(end, startGap, false) >= 0) {
+                if (NumRangeItem.gap(end, startGap, false) >= 0) {
                     item.setStart(start);
                 } else {
                     NumRangeItem newItem = new NumRangeItem(start, end);
@@ -90,7 +64,7 @@ public class NumRange {
             }
 
             Long itemEnd = item.getEnd();
-            long endGap = gap(start, itemEnd, false);
+            long endGap = NumRangeItem.gap(start, itemEnd, false);
             if (endGap <= 1) {
                 return index;
             } else {
@@ -121,8 +95,10 @@ public class NumRange {
     }
 
     public NumRange unionItem(NumRangeItem item) {
-        int index = installStart(item.getStart(), item.getEnd(), items);
-        installEnd(item.getEnd(), index, items);
+        if (item != null && item.isValid()) {
+            int index = installStart(item.getStart(), item.getEnd(), items);
+            installEnd(item.getEnd(), index, items);
+        }
         return this;
     }
 
@@ -147,9 +123,11 @@ public class NumRange {
     }
 
     public NumRange subtractItem(NumRangeItem item) {
-        int index = subtractStart(item.getStart(), items);
-        if (index >= 0) {
-            subtractEnd(item.getEnd(), index, items);
+        if (item != null && item.isValid()) {
+            int index = subtractStart(item.getStart(), items);
+            if (index >= 0) {
+                subtractEnd(item.getEnd(), index, items);
+            }
         }
 
         return this;
@@ -159,14 +137,14 @@ public class NumRange {
         for (int index = startIndex; index < items.size(); ) {
             NumRangeItem item = items.get(index);
             Long itemStart = item.getStart();
-            long gapStart = gap(end, itemStart, false);
+            long gapStart = NumRangeItem.gap(end, itemStart, false);
             if (gapStart < 0) {
                 return;
             }
             item.setStart(end + 1);
 
             Long itemEnd = item.getEnd();
-            long gapEnd = gap(end, itemEnd, false);
+            long gapEnd = NumRangeItem.gap(end, itemEnd, false);
             if (gapEnd < 0) {
                 return;
             }
@@ -178,13 +156,13 @@ public class NumRange {
         for (int index = 0; index < items.size(); index++) {
             NumRangeItem item = items.get(index);
             Long itemStart = item.getStart();
-            long gapStart = gap(start, itemStart, true);
+            long gapStart = NumRangeItem.gap(start, itemStart, true);
             if (gapStart <= 0) {
                 return index;
             }
 
             Long itemEnd = item.getEnd();
-            long gapEnd = gap(start, itemEnd, false);
+            long gapEnd = NumRangeItem.gap(start, itemEnd, false);
             if (gapEnd <= 0) {
                 int nextIndex = index + 1;
                 items.add(nextIndex, new NumRangeItem(start + 1, item.getEnd()));

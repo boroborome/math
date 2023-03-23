@@ -9,6 +9,16 @@ import java.util.stream.Collectors;
 class NumRangeTest {
 
     @Test
+    void should_ignore_wrong_item() {
+        NumRange range = new NumRange();
+        range.unionItem(new NumRangeItem(2, 5))
+                        .unionItem(new NumRangeItem(7, 1));
+
+        Assertions.assertEquals("[2,5]",
+                range.toString());
+    }
+
+    @Test
     void should_parse_from_string_success() {
         Assertions.assertEquals(new NumRange(Arrays.asList(
                         new NumRangeItem(1, 1)
