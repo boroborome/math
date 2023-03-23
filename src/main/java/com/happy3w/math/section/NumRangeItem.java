@@ -63,14 +63,50 @@ public class NumRangeItem {
             return null;
         }
 
-        String[] nums = text.replace("[", "")
-                .replace("]", "")
-                .replace("(", "")
-                .replace(")", "")
-                .split(",");
-        Long start = parseNum(nums[0].trim());
-        Long end = parseNum(nums.length < 2 ? "" : nums[1].trim());
-        return new NumRangeItem(start, end);
+        String pureText = text.replaceAll(" ", "");
+        String[] nums = pureText.split(",");
+
+        String startText, endText;
+        if (nums.length < 2) {
+            startText =pureText.substring(0, pureText.length() - 1);
+            endText = pureText.substring(1);
+        } else {
+            startText = nums[0];
+            endText = nums[1];
+        }
+        NumRangeItem rangeItem = new NumRangeItem(
+                parseStart(startText),
+                parseEnd(endText));
+        return rangeItem.isValid() ? rangeItem : null;
+    }
+
+    private static Long parseEnd(String endText) {
+        int bracketIndex = endText.length() - 1;
+        String numText = endText.substring(0, bracketIndex);
+        if (numText.isEmpty() || "*".equals(numText)) {
+            return null;
+        }
+
+        long num = Long.parseLong(numText);
+        char bracket = endText.charAt(bracketIndex);
+        if (bracket == ')') {
+            num--;
+        }
+        return Long.valueOf(num);
+    }
+
+    private static Long parseStart(String startText) {
+        String numText = startText.substring(1);
+        if (numText.isEmpty() || "*".equals(numText)) {
+            return null;
+        }
+
+        long num = Long.parseLong(numText);
+        char bracket = startText.charAt(0);
+        if (bracket == '(') {
+            num++;
+        }
+        return Long.valueOf(num);
     }
 
     private static Long parseNum(String text) {
