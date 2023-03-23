@@ -196,17 +196,20 @@ public class NumRange {
         return buf.toString();
     }
 
+    public NumRange initBy(String text) {
+        items.clear();
+        if (StringUtils.hasText(text)) {
+            for (String textItem : text.split(";")) {
+                NumRangeItem item = NumRangeItem.parse(textItem.trim());
+                unionItem(item);
+            }
+        }
+
+        return this;
+    }
+
     public static NumRange parse(String text) {
-        NumRange range = new NumRange();
-        if (StringUtils.isEmpty(text)) {
-            return range;
-        }
-
-        for (String textItem : text.split(";")) {
-            NumRangeItem item = NumRangeItem.parse(textItem.trim());
-            range.unionItem(item);
-        }
-
-        return range;
+        return new NumRange()
+                .initBy(text);
     }
 }
