@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
-public class NumRangeItem {
+public class NumRangeItem implements Cloneable {
     private Long start;
     private Long end;
 
@@ -117,5 +117,10 @@ public class NumRangeItem {
         return start == null
                 || end == null
                 || start <= end;
+    }
+
+    @Override
+    public NumRangeItem clone() {
+        return new NumRangeItem(start, end);
     }
 }

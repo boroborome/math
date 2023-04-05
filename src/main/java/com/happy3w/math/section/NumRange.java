@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 @EqualsAndHashCode
 @NoArgsConstructor
-public class NumRange {
+public class NumRange implements Cloneable {
     private List<NumRangeItem> items = new ArrayList<>();
 
     public NumRange(List<NumRangeItem> items) {
@@ -206,6 +206,15 @@ public class NumRange {
         }
 
         return this;
+    }
+
+    @Override
+    public NumRange clone() {
+        NumRange newRange = new NumRange();
+        for (NumRangeItem item : items) {
+            newRange.items.add(item.clone());
+        }
+        return newRange;
     }
 
     public static NumRange parse(String text) {
