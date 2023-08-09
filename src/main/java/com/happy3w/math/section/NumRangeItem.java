@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -17,6 +20,21 @@ public class NumRangeItem implements Cloneable {
     public NumRangeItem(int start, int end) {
         this.start = Long.valueOf(start);
         this.end = Long.valueOf(end);
+    }
+
+    public Stream<NumRangeItem> split(long step) {
+        if (start == null || end == null) {
+            throw new UnsupportedOperationException("Unsupported split when start or end is null");
+        }
+        return LongStream.rangeClosed(0, (end - start) / step)
+                .mapToObj(i -> {
+                    long curStart = start + i * step;
+                    long curEnd = curStart + step - 1;
+                    if (curEnd > end) {
+                        curEnd = end;
+                    }
+                    return new NumRangeItem(curStart, curEnd);
+                });
     }
 
     public static long gap(Long a, Long b, boolean nullIsMin) {

@@ -67,8 +67,6 @@ public class NumRange implements Cloneable {
             long endGap = NumRangeItem.gap(start, itemEnd, false);
             if (endGap <= 1) {
                 return index;
-            } else {
-                continue;
             }
         }
 

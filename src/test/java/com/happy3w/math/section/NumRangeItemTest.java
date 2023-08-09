@@ -3,6 +3,8 @@ package com.happy3w.math.section;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.Collectors;
+
 class NumRangeItemTest {
 
     @Test
@@ -20,5 +22,13 @@ class NumRangeItemTest {
         Assertions.assertEquals(new NumRangeItem(null, null), NumRangeItem.parse("[,]"));
         Assertions.assertEquals(new NumRangeItem(null, 4L), NumRangeItem.parse("[*,5)"));
         Assertions.assertEquals(new NumRangeItem(null, 5L), NumRangeItem.parse("( * , 5 ]"));
+    }
+
+    @Test
+    void should_split_success() {
+        Assertions.assertEquals("[2,3],[4,5],[6,6]",
+                new NumRangeItem(2, 6).split(2)
+                .map(NumRangeItem::toString)
+                .collect(Collectors.joining(",")));
     }
 }
