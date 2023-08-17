@@ -1,6 +1,6 @@
 
 group = 'com.happy3w'
-version =  '1.0.12'
+version =  '1.0.13'
 
 ext {
 	artifactId = "math"
